@@ -8,13 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		43A9732E1897C9EA00A9DEF9 /* BBGraphKit.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 43A9732D1897C9EA00A9DEF9 /* BBGraphKit.podspec */; };
+		43A973341897D31C00A9DEF9 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B5163F771896E48B00EE01F3 /* Main_iPhone.storyboard */; };
 		B5163F661896E48B00EE01F3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F651896E48B00EE01F3 /* Foundation.framework */; };
 		B5163F681896E48B00EE01F3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F671896E48B00EE01F3 /* CoreGraphics.framework */; };
 		B5163F6A1896E48B00EE01F3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F691896E48B00EE01F3 /* UIKit.framework */; };
 		B5163F701896E48B00EE01F3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B5163F6E1896E48B00EE01F3 /* InfoPlist.strings */; };
 		B5163F721896E48B00EE01F3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F711896E48B00EE01F3 /* main.m */; };
 		B5163F761896E48B00EE01F3 /* BBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F751896E48B00EE01F3 /* BBAppDelegate.m */; };
-		B5163F791896E48B00EE01F3 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B5163F771896E48B00EE01F3 /* Main_iPhone.storyboard */; };
 		B5163F7F1896E48B00EE01F3 /* BBViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F7E1896E48B00EE01F3 /* BBViewController.m */; };
 		B5163F811896E48B00EE01F3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5163F801896E48B00EE01F3 /* Images.xcassets */; };
 		B5163F9F1896E4DC00EE01F3 /* BBLineGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */; };
@@ -175,9 +175,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43A973341897D31C00A9DEF9 /* Main_iPhone.storyboard in Resources */,
 				43A9732E1897C9EA00A9DEF9 /* BBGraphKit.podspec in Resources */,
 				B5163F811896E48B00EE01F3 /* Images.xcassets in Resources */,
-				B5163F791896E48B00EE01F3 /* Main_iPhone.storyboard in Resources */,
 				B5163F701896E48B00EE01F3 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
