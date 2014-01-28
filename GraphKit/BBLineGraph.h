@@ -37,6 +37,10 @@ typedef NS_ENUM(NSInteger, BBLineGraphAxis) {
 @property (nonatomic, weak) IBOutlet id<BBLineGraphDataSource> dataSource;
 @property (nonatomic, assign) BBLineGraphAxis orderedAxis; // by defualt X;
 
+//Set the lowest value on the axis based on the lowest data point (Default is NO)
+@property (nonatomic, assign) BOOL scaleXAxisToValues;
+@property (nonatomic, assign) BOOL scaleYAxisToValues;
+
 - (void)reloadData;
 
 - (NSInteger)numberOfLines;

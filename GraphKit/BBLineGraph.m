@@ -164,18 +164,16 @@
 
 - (void)setUpValueSpace
 {
-	// simply create a view the size of our values
-	self.valueSpace = CGRectMake(0,
-								 0,
-								 _highestXValue,
-								 _highestYValue);
-	return;
+    CGFloat xSize;
+    CGFloat ySize;
     
-	// we can also offset for the on zero identity, up to you. maybe a public bool or somthing?
+    xSize = _scaleXAxisToValues ? _highestXValue - _lowestXValue : _highestXValue;
+    ySize = _scaleYAxisToValues ? _highestYValue - _lowestYValue : _highestYValue;
+
 	self.valueSpace = CGRectMake(0,
 								 0,
-								 _highestYValue - _lowestYValue,
-								 _highestXValue - _lowestXValue);
+								 xSize,
+								 ySize);
 }
 
 - (void)drawLines
@@ -196,12 +194,20 @@
 	UIBezierPath *linePath = [UIBezierPath bezierPath];
     
 	// loop through the values
-	[lineArray enumerateObjectsUsingBlock:^(NSValue	*point, NSUInteger pointNumber, BOOL *stop) {
+	[lineArray enumerateObjectsUsingBlock:^(NSValue	*pointValue, NSUInteger pointNumber, BOOL *stop) {
+        
+        CGPoint point = pointValue.CGPointValue;
+        
+        if (_scaleXAxisToValues)
+            point.x -= _lowestXValue;
+        
+        if (_scaleYAxisToValues)
+            point.y -= _lowestYValue;
         
 		// convert the values to screen
-		CGPoint screenPoint = [self convertPointToScreenSpace:point.CGPointValue];
+		CGPoint screenPoint = [self convertPointToScreenSpace:point];
         
-		NSLog(@"Value (%f,%f), Screen (%f,%f)", point.CGPointValue.x, point.CGPointValue.y, screenPoint.x, screenPoint.y);
+		NSLog(@"Value (%f,%f), Screen (%f,%f)", point.x, point.y, screenPoint.x, screenPoint.y);
         
 		// for the first point move to point
 		if (pointNumber == 0)
@@ -279,7 +285,7 @@
 
 - (CGPoint)convertPointToValueSpace:(CGPoint)point
 {
-	return CGPointApplyAffineTransform(point, [self transformFromValueToScreen]);
+	return CGPointApplyAffineTransform(point, [self transformFromScreenToValue]);
 }
 
 - (CGAffineTransform)transformFromValueToScreen
