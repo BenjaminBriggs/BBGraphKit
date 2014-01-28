@@ -218,8 +218,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     }
     else if (axis == BBLineGraphAxisY)
     {
-        startPoint = CGPointMake(MIN(_lowestYValue, 0), 0);
-        endPoint = CGPointMake(_highestYValue, 0);
+        startPoint = CGPointMake(0, MIN(_lowestYValue, 0));
+        endPoint = CGPointMake(0, _highestYValue);
         layerKey = yAxisLayerKey;
     }
     
