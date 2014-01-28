@@ -329,7 +329,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 	layer.lineWidth = 2.f;
 	layer.lineJoin = kCALineJoinRound;
     
-	layer.strokeColor = [UIColor redColor].CGColor;
+	layer.strokeColor = [self colorForLine:line];
 	layer.fillColor = [UIColor clearColor].CGColor;
     
     if(line == -1)
@@ -340,7 +340,15 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 #pragma mark - Helpers
 
-
+-(CGColorRef)colorForLine:(NSInteger)line
+{
+    UIColor *color = [self.delegate lineGraph:self colorForLine:line];
+    
+    if(color)
+        return color.CGColor;
+    
+    return [UIColor blackColor].CGColor;
+}
 - (NSInteger)numberOfLines
 {
 	return self.lines.count;

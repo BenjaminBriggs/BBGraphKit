@@ -32,9 +32,18 @@ typedef NS_ENUM(NSInteger, BBLineGraphAxis) {
 
 @end
 
+@protocol BBLineGraphDelegate <NSObject>
+
+@optional
+
+- (UIColor *)lineGraph:(BBLineGraph *)lineGraph colorForLine:(NSInteger)line;
+
+@end
+
 @interface BBLineGraph : UIView
 
 @property (nonatomic, weak) IBOutlet id<BBLineGraphDataSource> dataSource;
+@property (nonatomic, weak) IBOutlet id<BBLineGraphDelegate> delegate;
 @property (nonatomic, assign) BBLineGraphAxis orderedAxis; // by defualt X;
 
 //Set the lowest value on the axis based on the lowest data point (Default is NO)
