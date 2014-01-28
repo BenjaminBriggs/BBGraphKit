@@ -114,8 +114,8 @@
 			highestYValue = MAX(highestYValue, point.y);
 			highestXValue = MAX(highestXValue, point.x);
             
-			lowestYValue = MAX(lowestYValue, point.y);
-			lowestXValue = MAX(lowestXValue, point.x);
+			lowestYValue = MIN(lowestYValue, point.y);
+			lowestXValue = MIN(lowestXValue, point.x);
             
         }
         
@@ -136,11 +136,11 @@
 		else
         {
 			[points sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-				if ([obj1 CGPointValue].x > [obj2 CGPointValue].x) {
+				if ([obj1 CGPointValue].y > [obj2 CGPointValue].y) {
 					return (NSComparisonResult)NSOrderedDescending;
 				}
                 
-				if ([obj1 CGPointValue].x < [obj2 CGPointValue].x) {
+				if ([obj1 CGPointValue].y < [obj2 CGPointValue].y) {
 					return (NSComparisonResult)NSOrderedAscending;
 				}
 				return (NSComparisonResult)NSOrderedSame;
