@@ -46,6 +46,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     {
 		_screenSpaceView = [[UIView alloc] initWithFrame:self.bounds];
 		_screenSpaceView.backgroundColor = [UIColor lightGrayColor];
+        _screenSpaceView.clipsToBounds = YES;
 		[self addSubview:_screenSpaceView];
 	}
 	return _screenSpaceView;
@@ -190,16 +191,16 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 - (void)drawLines
 {
+	for (NSInteger l = 0; l < [self numberOfLines]; l++)
+    {
+		[self drawLine:l];
+    }
+    
     if (_displayXAxis)
         [self drawAxis:BBLineGraphAxisX];
     
     if (_displayYAxis)
         [self drawAxis:BBLineGraphAxisY];
-    
-	for (NSInteger l = 0; l < [self numberOfLines]; l++)
-    {
-		[self drawLine:l];
-    }
 }
 
 -(void)drawAxis:(BBLineGraphAxis)axis
@@ -234,12 +235,12 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         endPoint.x -= _lowestXValue;
     }
     
-    startPoint = [self convertPointToScreenSpace:startPoint];
-    endPoint = [self convertPointToScreenSpace:endPoint];
+    CGPoint screenStartPoint = [self convertPointToScreenSpace:startPoint];
+    CGPoint screenEndPoint = [self convertPointToScreenSpace:endPoint];
     
     UIBezierPath *linePath = [UIBezierPath bezierPath];
-    [linePath moveToPoint:startPoint];
-    [linePath addLineToPoint:endPoint];
+    [linePath moveToPoint:screenStartPoint];
+    [linePath addLineToPoint:screenEndPoint];
     
     // get the layer for the line;
 	CAShapeLayer *lineLayer = [self.lineLayers objectForKey:layerKey];
@@ -250,15 +251,15 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 		// For now we are passing in -1 for an axis.  There's probably a better way
 		lineLayer = [self styledLayerForLine:-1];
         
-		// add the layer to the view hierarchy
-		[self.screenSpaceView.layer addSublayer:lineLayer];
+		// add the layer to the view hierarchy.  We add to self and not the screenView to prevent clipping
+		[self.layer addSublayer:lineLayer];
         
 		// save a refrence for later;
 		[self.lineLayers setObject:lineLayer forKey:layerKey];
     }
     
 	// you could animate these
-	lineLayer.frame = self.bounds;
+	lineLayer.frame = self.screenSpaceView.frame;
 	lineLayer.path = linePath.CGPath;
 }
 
