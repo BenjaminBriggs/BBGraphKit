@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		43A9732E1897C9EA00A9DEF9 /* BBGraphKit.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 43A9732D1897C9EA00A9DEF9 /* BBGraphKit.podspec */; };
 		B5163F661896E48B00EE01F3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F651896E48B00EE01F3 /* Foundation.framework */; };
 		B5163F681896E48B00EE01F3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F671896E48B00EE01F3 /* CoreGraphics.framework */; };
 		B5163F6A1896E48B00EE01F3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F691896E48B00EE01F3 /* UIKit.framework */; };
@@ -20,20 +21,22 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		43A9732D1897C9EA00A9DEF9 /* BBGraphKit.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BBGraphKit.podspec; sourceTree = "<group>"; };
+		43A973311897CEE000A9DEF9 /* BBGraphKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBGraphKit.h; path = GraphKit/BBGraphKit.h; sourceTree = "<group>"; };
 		B5163F621896E48B00EE01F3 /* GraphKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GraphKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5163F651896E48B00EE01F3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B5163F671896E48B00EE01F3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B5163F691896E48B00EE01F3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		B5163F6D1896E48B00EE01F3 /* GraphKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GraphKit-Info.plist"; sourceTree = "<group>"; };
+		B5163F6D1896E48B00EE01F3 /* GraphKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GraphKit-Info.plist"; path = "../GraphKit Example/GraphKit-Info.plist"; sourceTree = "<group>"; };
 		B5163F6F1896E48B00EE01F3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B5163F711896E48B00EE01F3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		B5163F731896E48B00EE01F3 /* GraphKit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GraphKit-Prefix.pch"; sourceTree = "<group>"; };
-		B5163F741896E48B00EE01F3 /* BBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBAppDelegate.h; sourceTree = "<group>"; };
-		B5163F751896E48B00EE01F3 /* BBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBAppDelegate.m; sourceTree = "<group>"; };
+		B5163F711896E48B00EE01F3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "../GraphKit Example/main.m"; sourceTree = "<group>"; };
+		B5163F731896E48B00EE01F3 /* GraphKit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "GraphKit-Prefix.pch"; path = "../GraphKit Example/GraphKit-Prefix.pch"; sourceTree = "<group>"; };
+		B5163F741896E48B00EE01F3 /* BBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BBAppDelegate.h; path = "../GraphKit Example/BBAppDelegate.h"; sourceTree = "<group>"; };
+		B5163F751896E48B00EE01F3 /* BBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BBAppDelegate.m; path = "../GraphKit Example/BBAppDelegate.m"; sourceTree = "<group>"; };
 		B5163F781896E48B00EE01F3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
-		B5163F7D1896E48B00EE01F3 /* BBViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBViewController.h; sourceTree = "<group>"; };
-		B5163F7E1896E48B00EE01F3 /* BBViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBViewController.m; sourceTree = "<group>"; };
-		B5163F801896E48B00EE01F3 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		B5163F7D1896E48B00EE01F3 /* BBViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BBViewController.h; path = "../GraphKit Example/BBViewController.h"; sourceTree = "<group>"; };
+		B5163F7E1896E48B00EE01F3 /* BBViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BBViewController.m; path = "../GraphKit Example/BBViewController.m"; sourceTree = "<group>"; };
+		B5163F801896E48B00EE01F3 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../GraphKit Example/Images.xcassets"; sourceTree = "<group>"; };
 		B5163F871896E48B00EE01F3 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		B5163F9D1896E4DC00EE01F3 /* BBLineGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBLineGraph.h; path = GraphKit/BBLineGraph.h; sourceTree = "<group>"; };
 		B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBLineGraph.m; path = GraphKit/BBLineGraph.m; sourceTree = "<group>"; };
@@ -53,11 +56,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		43A973301897CEBA00A9DEF9 /* GraphKit */ = {
+			isa = PBXGroup;
+			children = (
+				43A973311897CEE000A9DEF9 /* BBGraphKit.h */,
+				B5163F9D1896E4DC00EE01F3 /* BBLineGraph.h */,
+				B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */,
+			);
+			name = GraphKit;
+			sourceTree = "<group>";
+		};
 		B5163F591896E48B00EE01F3 = {
 			isa = PBXGroup;
 			children = (
-				B5163F9D1896E4DC00EE01F3 /* BBLineGraph.h */,
-				B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */,
+				43A9732D1897C9EA00A9DEF9 /* BBGraphKit.podspec */,
+				43A973301897CEBA00A9DEF9 /* GraphKit */,
 				B5163F6B1896E48B00EE01F3 /* Example */,
 				B5163F641896E48B00EE01F3 /* Frameworks */,
 				B5163F631896E48B00EE01F3 /* Products */,
@@ -136,7 +149,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = BB;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Benjamin Briggs";
 			};
 			buildConfigurationList = B5163F5D1896E48B00EE01F3 /* Build configuration list for PBXProject "GraphKit" */;
@@ -162,6 +175,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43A9732E1897C9EA00A9DEF9 /* BBGraphKit.podspec in Resources */,
 				B5163F811896E48B00EE01F3 /* Images.xcassets in Resources */,
 				B5163F791896E48B00EE01F3 /* Main_iPhone.storyboard in Resources */,
 				B5163F701896E48B00EE01F3 /* InfoPlist.strings in Resources */,
@@ -191,6 +205,7 @@
 				B5163F6F1896E48B00EE01F3 /* en */,
 			);
 			name = InfoPlist.strings;
+			path = "../GraphKit Example";
 			sourceTree = "<group>";
 		};
 		B5163F771896E48B00EE01F3 /* Main_iPhone.storyboard */ = {
@@ -199,6 +214,7 @@
 				B5163F781896E48B00EE01F3 /* Base */,
 			);
 			name = Main_iPhone.storyboard;
+			path = "../GraphKit Example";
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -208,7 +224,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -248,7 +263,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -284,8 +298,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "GraphKit/GraphKit-Prefix.pch";
-				INFOPLIST_FILE = "GraphKit/GraphKit-Info.plist";
+				GCC_PREFIX_HEADER = "GraphKit Example/GraphKit-Prefix.pch";
+				INFOPLIST_FILE = "GraphKit Example/GraphKit-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
@@ -325,6 +339,7 @@
 				B5163F991896E48B00EE01F3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
