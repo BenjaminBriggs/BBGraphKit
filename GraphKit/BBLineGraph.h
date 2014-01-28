@@ -41,6 +41,10 @@ typedef NS_ENUM(NSInteger, BBLineGraphAxis) {
 @property (nonatomic, assign) BOOL scaleXAxisToValues;
 @property (nonatomic, assign) BOOL scaleYAxisToValues;
 
+//Show lines at x=0 and y=0
+@property (nonatomic, assign) BOOL displayXAxis;
+@property (nonatomic, assign) BOOL displayYAxis;
+
 - (void)reloadData;
 
 - (NSInteger)numberOfLines;

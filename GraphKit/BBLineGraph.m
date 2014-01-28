@@ -26,7 +26,19 @@
 
 @end
 
+NSString *const xAxisLayerKey = @"xAxisLayer";
+NSString *const yAxisLayerKey = @"yAxisLayer";
+
 @implementation BBLineGraph
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _lineLayers = [NSMutableDictionary dictionary];
+    }
+    return self;
+}
 
 - (UIView *)screenSpaceView
 {
@@ -178,11 +190,76 @@
 
 - (void)drawLines
 {
-	// just a convients call to draw each line
+    if (_displayXAxis)
+        [self drawAxis:BBLineGraphAxisX];
+    
+    if (_displayYAxis)
+        [self drawAxis:BBLineGraphAxisY];
+    
 	for (NSInteger l = 0; l < [self numberOfLines]; l++)
     {
 		[self drawLine:l];
     }
+}
+
+-(void)drawAxis:(BBLineGraphAxis)axis
+{
+    //TODO: specify the colour & thickness of these lines via a delegate method
+
+    CGPoint startPoint;
+    CGPoint endPoint;
+    NSString *layerKey;
+    
+    if (axis == BBLineGraphAxisX)
+    {
+        startPoint = CGPointMake(MIN(_lowestXValue, 0), 0);
+        endPoint = CGPointMake(_highestXValue, 0);
+        layerKey = xAxisLayerKey;
+    }
+    else if (axis == BBLineGraphAxisY)
+    {
+        startPoint = CGPointMake(MIN(_lowestYValue, 0), 0);
+        endPoint = CGPointMake(_highestYValue, 0);
+        layerKey = yAxisLayerKey;
+    }
+    
+    if (_scaleYAxisToValues)
+    {
+        startPoint.y -= _lowestYValue;
+        endPoint.y -= _lowestYValue;
+    }
+    if (_scaleYAxisToValues)
+    {
+        startPoint.x -= _lowestXValue;
+        endPoint.x -= _lowestXValue;
+    }
+    
+    startPoint = [self convertPointToScreenSpace:startPoint];
+    endPoint = [self convertPointToScreenSpace:endPoint];
+    
+    UIBezierPath *linePath = [UIBezierPath bezierPath];
+    [linePath moveToPoint:startPoint];
+    [linePath addLineToPoint:endPoint];
+    
+    // get the layer for the line;
+	CAShapeLayer *lineLayer = [self.lineLayers objectForKey:layerKey];
+    
+	// if there isn't a line
+	if (!lineLayer)
+    {
+		// For now we are passing in -1 for an axis.  There's probably a better way
+		lineLayer = [self styledLayerForLine:-1];
+        
+		// add the layer to the view hierarchy
+		[self.screenSpaceView.layer addSublayer:lineLayer];
+        
+		// save a refrence for later;
+		[self.lineLayers setObject:lineLayer forKey:layerKey];
+    }
+    
+	// you could animate these
+	lineLayer.frame = self.bounds;
+	lineLayer.path = linePath.CGPath;
 }
 
 - (void)drawLine:(NSInteger)line
@@ -253,6 +330,9 @@
     
 	layer.strokeColor = [UIColor redColor].CGColor;
 	layer.fillColor = [UIColor clearColor].CGColor;
+    
+    if(line == -1)
+        layer.strokeColor = [UIColor blackColor].CGColor;
     
 	return layer;
 }
