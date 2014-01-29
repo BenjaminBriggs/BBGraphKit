@@ -7,11 +7,13 @@
 //
 
 #import "BBLineGraph.h"
+#import "BBGraph+SubclassingHooks.h"
 
 @interface BBLineGraph ()
 
-@property (nonatomic, strong) NSArray *lines; // an array of arrays of nsvalues for cgpoints
 @property (nonatomic, strong) NSMutableDictionary *lineLayers; //an array of calayers;
+@property (nonatomic, strong) NSMutableDictionary *numberOfAxisLabels; //A number of labels per axis where the key is a BBLineGraphAxis enum
+@property (nonatomic, strong) NSMutableDictionary *intervalOfAxisLabels; //The interval to display axis labels
 
 @property (nonatomic, assign) CGRect valueSpace;
 @property (nonatomic, assign) CGRect screenSpace;
@@ -30,12 +32,17 @@ NSString *const xAxisLayerKey = @"xAxisLayer";
 NSString *const yAxisLayerKey = @"yAxisLayer";
 
 @implementation BBLineGraph
+@synthesize series = _series;
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
         _lineLayers = [NSMutableDictionary dictionary];
+        _numberOfAxisLabels = [NSMutableDictionary dictionary];
+        _intervalOfAxisLabels = [NSMutableDictionary dictionary];
+        _scaleYAxisToValues = YES;
+        _scaleXAxisToValues = YES;
     }
     return self;
 }
@@ -45,7 +52,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 	if (!_screenSpaceView)
     {
 		_screenSpaceView = [[UIView alloc] initWithFrame:self.bounds];
-		_screenSpaceView.backgroundColor = [UIColor lightGrayColor];
+        //TODO: Add a property to colour this area
         _screenSpaceView.clipsToBounds = YES;
 		[self addSubview:_screenSpaceView];
 	}
@@ -62,32 +69,28 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 	[super layoutSubviews];
 	self.screenSpaceView.frame = CGRectInset(self.bounds, 10, 10);
     
-	if (!self.lines) { [self populateLines]; }
+	if (!self.series) { [self populateSeries]; }
     
 	[self setUpValueSpace];
-	[self drawLines];
-    
-	// Just for dev
-	self.layer.borderColor = [UIColor redColor].CGColor;
-	self.layer.borderWidth = 1.f;
+	[self drawGraph];
 }
 
 - (void)reloadData
 {
-	[self populateLines];
+	[self populateSeries];
 	[self setUpValueSpace];
-	[self drawLines];
+	[self drawGraph];
 }
 
-- (void)populateLines
+- (void)populateSeries
 {
 	// get the number of lines in the graph
-	NSInteger numberOfLines = 1;
+	NSInteger numberOfSeries = 1;
     
 	// check if the data source provided a number of lines
-	if ([self.dataSource respondsToSelector:@selector(numberOfLinesInLineGraph:)])
+	if ([self.dataSource respondsToSelector:@selector(numberOfSeriesInGraph:)])
     {
-		numberOfLines = [self.dataSource numberOfLinesInLineGraph:self];
+		numberOfSeries = [self.dataSource numberOfSeriesInGraph:self];
     }
     
 	// set up some holders fpr the high and low values
@@ -98,15 +101,15 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 	CGFloat lowestXValue = MAXFLOAT;
     
 	// create an array to holder the lines
-	NSMutableArray *lines = [NSMutableArray arrayWithCapacity:numberOfLines];
+	NSMutableArray *lines = [NSMutableArray arrayWithCapacity:numberOfSeries];
     
 	// loop to get the lines
-	for (NSInteger l = 0; l < numberOfLines; l++)
+	for (NSInteger l = 0; l < numberOfSeries; l++)
     {
         
 		// check how many points are in this line
-		NSInteger numberOfPoints = [self.dataSource lineGraph:self
-										 numberOfPointsInLine:l];
+		NSInteger numberOfPoints = [self.dataSource graph:self
+										 numberOfPointsInSeries:l];
         
 		// create an array to hold the points
 		NSMutableArray *points = [NSMutableArray arrayWithCapacity:numberOfPoints];
@@ -116,7 +119,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         {
             
 			// get the point from the data source
-			CGPoint point = [self.dataSource lineGraph:self
+			CGPoint point = [self.dataSource graph:self
 								  valueForPointAtIndex:[NSIndexPath indexPathForPoint:p
 																			   inLine:l]];
             
@@ -133,7 +136,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         }
         
 		// sort the line
-		if (self.orderedAxis == BBLineGraphAxisX)
+		if (self.orderedAxis == BBGraphAxisX)
         {
 			[points sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
 				if ([obj1 CGPointValue].x > [obj2 CGPointValue].x) {
@@ -165,7 +168,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     }
     
 	// save the lines array
-	self.lines = lines;
+	self.series = lines;
     
 	// finaly save the high and low values
 	_highestYValue = highestYValue;
@@ -189,7 +192,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 								 ySize);
 }
 
-- (void)drawLines
+- (void)drawGraph
 {
 	for (NSInteger l = 0; l < [self numberOfLines]; l++)
     {
@@ -197,27 +200,27 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     }
     
     if (_displayXAxis)
-        [self drawAxis:BBLineGraphAxisX];
+        [self drawAxis:BBGraphAxisX];
     
     if (_displayYAxis)
-        [self drawAxis:BBLineGraphAxisY];
+        [self drawAxis:BBGraphAxisY];
 }
 
--(void)drawAxis:(BBLineGraphAxis)axis
+-(void)drawAxis:(BBGraphAxis)axis
 {
-    //TODO: specify the colour & thickness of these lines via a delegate method
+    //TODO: specify the thickness of these lines via a delegate method
 
     CGPoint startPoint;
     CGPoint endPoint;
     NSString *layerKey;
     
-    if (axis == BBLineGraphAxisX)
+    if (axis == BBGraphAxisX)
     {
         startPoint = CGPointMake(MIN(_lowestXValue, 0), 0);
         endPoint = CGPointMake(_highestXValue, 0);
         layerKey = xAxisLayerKey;
     }
-    else if (axis == BBLineGraphAxisY)
+    else if (axis == BBGraphAxisY)
     {
         startPoint = CGPointMake(0, MIN(_lowestYValue, 0));
         endPoint = CGPointMake(0, _highestYValue);
@@ -229,10 +232,18 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         startPoint.y -= _lowestYValue;
         endPoint.y -= _lowestYValue;
     }
-    if (_scaleYAxisToValues)
+    else
+    {
+        startPoint.y = 0;
+    }
+    if (_scaleXAxisToValues)
     {
         startPoint.x -= _lowestXValue;
         endPoint.x -= _lowestXValue;
+    }
+    else
+    {
+        startPoint.x = 0;
     }
     
     CGPoint screenStartPoint = [self convertPointToScreenSpace:startPoint];
@@ -242,6 +253,99 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     [linePath moveToPoint:screenStartPoint];
     [linePath addLineToPoint:screenEndPoint];
     
+    //Draw lines perpendicular to the Axis for labeled data points
+    NSUInteger numberOfLabels = 0;
+    NSUInteger intervalOfLabels = 0;
+
+    //Get the information from the data source required to calculate & draw these
+    if ([self.dataSource respondsToSelector:@selector(graph:intervalOfLabelsForAxis:)])
+    {
+        intervalOfLabels = [self.dataSource graph:self intervalOfLabelsForAxis:axis];
+        if(axis == BBGraphAxisX)
+        {
+            numberOfLabels = floor((_highestXValue - _lowestXValue) / intervalOfLabels);
+        }
+        else if (axis == BBGraphAxisY)
+        {
+            numberOfLabels = floor((_highestYValue - _lowestYValue) / intervalOfLabels);
+
+        }
+    }
+    else if ([self.dataSource respondsToSelector:@selector(graph:numberOfLabelsForAxis:)])
+    {
+        numberOfLabels = [self.dataSource graph:self numberOfLabelsForAxis:axis];
+        if(axis == BBGraphAxisX)
+        {
+            intervalOfLabels = (_highestXValue - _lowestXValue) / numberOfLabels;
+        }
+        else if (axis == BBGraphAxisY)
+        {
+            intervalOfLabels = (_highestYValue - _lowestYValue) / numberOfLabels;
+            
+        }
+    }
+    
+    //Iterate through the number of required labels and draw the markers
+    for(int i = 0; i <= numberOfLabels; i++)
+    {
+        //Calculate the value of the data point to mark
+        NSInteger labelValue;
+        if (axis == BBGraphAxisX)
+            labelValue = _lowestXValue + i * intervalOfLabels;
+        else if (axis == BBGraphAxisY)
+            labelValue = _lowestYValue + i * intervalOfLabels;
+
+        /* When we come to draw the label text we will use either the value or something like:
+         - (NSString *)lineGraph:(BBLineGraph *)lineGraph stringForLabelAtValue:(NSInteger)value onAxis:(BBLineGraphAxis)axis; */
+        
+        CGPoint axisPoint;
+        CGPoint endAxisPoint;
+        
+        if (axis == BBGraphAxisX)
+        {
+            axisPoint = CGPointMake(labelValue, 0);
+        }
+        else if (axis == BBGraphAxisY)
+        {
+            axisPoint = CGPointMake(0, labelValue);
+        }
+
+        //The else if here prevents drawing label markers outside of the chart area
+        if (_scaleXAxisToValues)
+        {
+            axisPoint.x -= _lowestXValue;
+        }
+        else if (axisPoint.x < 0)
+        {
+            continue;
+        }
+        if (_scaleYAxisToValues)
+        {
+            axisPoint.y -= _lowestYValue;
+        }
+        else if (axisPoint.y < 0)
+        {
+            continue;
+        }
+        
+        axisPoint = [self convertPointToScreenSpace:axisPoint];
+        
+        endAxisPoint = axisPoint;
+        
+        if (axis == BBGraphAxisX)
+        {
+            endAxisPoint.y += 5;
+            axisPoint.y -= 1.0f;
+        }
+        else if (axis == BBGraphAxisY)
+        {
+            endAxisPoint.x -= 5;
+            axisPoint.x += 1.0f;
+        }
+        
+        [linePath moveToPoint:axisPoint];
+        [linePath addLineToPoint:endAxisPoint];
+    }
     // get the layer for the line;
 	CAShapeLayer *lineLayer = [self.lineLayers objectForKey:layerKey];
     
@@ -266,7 +370,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 - (void)drawLine:(NSInteger)line
 {
 	// get the line array
-	NSArray *lineArray =  self.lines[line];
+	NSArray *lineArray =  self.series[line];
     
 	// set up a bezier path
 	UIBezierPath *linePath = [UIBezierPath bezierPath];
@@ -342,23 +446,28 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 -(CGColorRef)colorForLine:(NSInteger)line
 {
-    UIColor *color = [self.delegate lineGraph:self colorForLine:line];
+    UIColor *color = nil;
     
-    if(color)
+    if ([self.delegate respondsToSelector:@selector(graph:colorForSeries:)])
+    {
+        color = [self.delegate graph:self colorForSeries:line];
+    }
+    
+    if (color)
         return color.CGColor;
     
     return [UIColor blackColor].CGColor;
 }
 - (NSInteger)numberOfLines
 {
-	return self.lines.count;
+	return self.series.count;
 }
 
 - (NSInteger)numberOfPointsInLine:(NSInteger)line
 {
-	if (line <= 0 && line > self.lines.count)
+	if (line <= 0 && line > self.series.count)
     {
-		NSArray *points = self.lines[line];
+		NSArray *points = self.series[line];
 		return points.count;
     }
 	else

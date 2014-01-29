@@ -22,7 +22,6 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="dcR-Ek-fYq"/>
-                                    <constraint firstAttribute="width" constant="320" id="uAz-lh-Jfc"/>
                                 </constraints>
                                 <connections>
                                     <outlet property="dataSource" destination="vXZ-lx-hvc" id="aGZ-1D-V2v"/>
@@ -33,7 +32,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerY" secondItem="fPb-zF-Src" secondAttribute="centerY" id="My7-2H-gma"/>
+                            <constraint firstAttribute="trailing" secondItem="fPb-zF-Src" secondAttribute="trailing" id="SW8-EI-fII"/>
                             <constraint firstAttribute="centerX" secondItem="fPb-zF-Src" secondAttribute="centerX" id="aEt-6Z-vsl"/>
+                            <constraint firstItem="fPb-zF-Src" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="xq0-vz-FH8"/>
                         </constraints>
                     </view>
                     <connections>

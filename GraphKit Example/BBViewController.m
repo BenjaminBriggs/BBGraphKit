@@ -10,8 +10,8 @@
 #import "BBLineGraph.h"
 
 @interface BBViewController ()
-<BBLineGraphDataSource,
-BBLineGraphDelegate>
+<BBGraphDataSource,
+BBGraphDelegate>
 
 @property (weak, nonatomic) IBOutlet BBLineGraph *lineGraph;
 @property (nonatomic, strong) NSArray *items;
@@ -46,19 +46,28 @@ BBLineGraphDelegate>
 
 #pragma mark - BBLineGraphDataSource
 
-- (NSInteger)lineGraph:(BBLineGraph *)lineGraph numberOfPointsInLine:(NSInteger)line
+- (NSInteger)graph:(BBGraph *)graph numberOfPointsInSeries:(NSInteger)line
 {
 	return self.items.count;
 }
 
-- (CGPoint)lineGraph:(BBLineGraph *)lineGraph valueForPointAtIndex:(NSIndexPath *)indexPath
+- (CGPoint)graph:(BBGraph *)graph valueForPointAtIndex:(NSIndexPath *)indexPath
 {
 	return [self.items[indexPath.point] CGPointValue];
 }
 
+- (NSUInteger)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
+{
+    if (axis == BBGraphAxisY)
+    {
+        return 100;
+    }
+    return 1;
+}
+
 #pragma mark - BBLineGraphDelegate
 
-- (UIColor *)lineGraph:(BBLineGraph *)lineGraph colorForLine:(NSInteger)line
+- (UIColor *)graph:(BBGraph *)graph colorForSeries:(NSInteger)series
 {
     return [UIColor greenColor];
 }
