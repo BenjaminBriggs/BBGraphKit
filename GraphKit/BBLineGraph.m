@@ -12,6 +12,7 @@
 @interface BBLineGraph ()
 
 @property (nonatomic, strong) NSMutableDictionary *lineLayers; //an array of calayers;
+@property (nonatomic, strong) NSMutableDictionary *axisDataPointLayers; //an array of calayers;
 @property (nonatomic, strong) NSMutableDictionary *numberOfAxisLabels; //A number of labels per axis where the key is a BBLineGraphAxis enum
 @property (nonatomic, strong) NSMutableDictionary *intervalOfAxisLabels; //The interval to display axis labels
 
@@ -56,10 +57,17 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 - (void)commonInit
 {
     _lineLayers = [NSMutableDictionary dictionary];
+    _axisDataPointLayers = [NSMutableDictionary dictionary];
     _numberOfAxisLabels = [NSMutableDictionary dictionary];
     _intervalOfAxisLabels = [NSMutableDictionary dictionary];
+    
+    //Defaults
+    self.axisDataPointWidth = 1.0f;
+    self.axisWidth = 2.0f;
     _scaleYAxisToValues = YES;
     _scaleXAxisToValues = YES;
+    _displayXAxis = YES;
+    _displayYAxis = YES;
 }
 
 - (UIView *)screenSpaceView
@@ -223,8 +231,6 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 -(void)drawAxis:(BBGraphAxis)axis
 {
-    //TODO: specify the thickness of these lines via a delegate method
-
     CGPoint startPoint;
     CGPoint endPoint;
     NSString *layerKey;
@@ -268,10 +274,35 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     [linePath moveToPoint:screenStartPoint];
     [linePath addLineToPoint:screenEndPoint];
     
+    // get the layer for the line;
+	CAShapeLayer *lineLayer = [self.lineLayers objectForKey:layerKey];
+    
+	// if there isn't a line
+	if (!lineLayer)
+    {
+		// For now we are passing in -1 for an axis.  There's probably a better way
+		lineLayer = [self styledLayerForLine:-1];
+        
+		// add the layer to the view hierarchy.  We add to self and not the screenView to prevent clipping
+		[self.layer addSublayer:lineLayer];
+        
+		// save a refrence for later;
+		[self.lineLayers setObject:lineLayer forKey:layerKey];
+    }
+    
+	// you could animate these
+	lineLayer.frame = self.screenSpaceView.frame;
+	lineLayer.path = linePath.CGPath;
+    
+    [self drawAxisDataPointsOnAxis:axis];
+}
+
+- (void)drawAxisDataPointsOnAxis:(BBGraphAxis)axis
+{
     //Draw lines perpendicular to the Axis for labeled data points
     NSUInteger numberOfLabels = 0;
     NSUInteger intervalOfLabels = 0;
-
+    
     //Get the information from the data source required to calculate & draw these
     if ([self.dataSource respondsToSelector:@selector(graph:intervalOfLabelsForAxis:)])
     {
@@ -283,7 +314,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         else if (axis == BBGraphAxisY)
         {
             numberOfLabels = floor((_highestYValue - _lowestYValue) / intervalOfLabels);
-
+            
         }
     }
     else if ([self.dataSource respondsToSelector:@selector(graph:numberOfLabelsForAxis:)])
@@ -299,7 +330,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
             
         }
     }
-    
+    UIBezierPath *linePath = [UIBezierPath bezierPath];
+
     //Iterate through the number of required labels and draw the markers
     for(int i = 0; i <= numberOfLabels; i++)
     {
@@ -309,7 +341,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
             labelValue = _lowestXValue + i * intervalOfLabels;
         else if (axis == BBGraphAxisY)
             labelValue = _lowestYValue + i * intervalOfLabels;
-
+        
         /* When we come to draw the label text we will use either the value or something like:
          - (NSString *)lineGraph:(BBLineGraph *)lineGraph stringForLabelAtValue:(NSInteger)value onAxis:(BBLineGraphAxis)axis; */
         
@@ -324,7 +356,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         {
             axisPoint = CGPointMake(0, labelValue);
         }
-
+        
         //The else if here prevents drawing label markers outside of the chart area
         if (_scaleXAxisToValues)
         {
@@ -361,20 +393,32 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         [linePath moveToPoint:axisPoint];
         [linePath addLineToPoint:endAxisPoint];
     }
+    
+    NSString *layerKey;
+    
+    if (axis == BBGraphAxisX)
+    {
+        layerKey = xAxisLayerKey;
+    }
+    else if (axis == BBGraphAxisY)
+    {
+        layerKey = yAxisLayerKey;
+    }
+    
     // get the layer for the line;
-	CAShapeLayer *lineLayer = [self.lineLayers objectForKey:layerKey];
+	CAShapeLayer *lineLayer = [self.axisDataPointLayers objectForKey:layerKey];
     
 	// if there isn't a line
 	if (!lineLayer)
     {
-		// For now we are passing in -1 for an axis.  There's probably a better way
-		lineLayer = [self styledLayerForLine:-1];
+		// For now we are passing in -2 for an axis data point.  There's probably a better way
+		lineLayer = [self styledLayerForLine:-2];
         
 		// add the layer to the view hierarchy.  We add to self and not the screenView to prevent clipping
 		[self.layer addSublayer:lineLayer];
         
 		// save a refrence for later;
-		[self.lineLayers setObject:lineLayer forKey:layerKey];
+		[self.axisDataPointLayers setObject:lineLayer forKey:layerKey];
     }
     
 	// you could animate these
@@ -445,7 +489,25 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 	CAShapeLayer *layer = [CAShapeLayer layer];
 	layer.frame = self.screenSpaceView.bounds;
     
-	layer.lineWidth = 2.f;
+    if(line == -2)
+    {
+        layer.lineWidth = self.axisDataPointWidth;
+    }
+    else if(line == -1)
+    {
+        layer.lineWidth = self.axisWidth;
+    }
+    else
+    {
+        if([self.delegate respondsToSelector:@selector(lineGraph:widthForLine:)])
+        {
+            layer.lineWidth = [self.delegate lineGraph:self widthForLine:line];
+        }
+        else
+        {
+            layer.lineWidth = 2.f;
+        }
+    }
 	layer.lineJoin = kCALineJoinRound;
     
 	layer.strokeColor = [self colorForLine:line];
@@ -460,7 +522,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 {
     UIColor *color = nil;
     
-    if(line == -1) //Axis colours
+    if(line < 0) //Axis colours
     {
         color = self.axisColor;
     }

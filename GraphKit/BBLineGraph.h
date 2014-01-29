@@ -8,13 +8,24 @@
 
 #import "BBGraph.h"
 
+@class BBLineGraph;
+
+@protocol BBLineGraphDelegate <BBGraphDelegate>
+
+@optional
+- (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForLine:(NSUInteger)line;
+
+@end
+
 @interface BBLineGraph : BBGraph
+
+@property (nonatomic, weak) IBOutlet id<BBLineGraphDelegate> delegate;
 
 //Set the lowest value on the axis based on the lowest data point (Default is YES)
 @property (nonatomic, assign) BOOL scaleXAxisToValues;
 @property (nonatomic, assign) BOOL scaleYAxisToValues;
 
-//Show lines at x=0 and y=0
+//Show lines at x=0 and y=0 (Default is YES)
 @property (nonatomic, assign) BOOL displayXAxis;
 @property (nonatomic, assign) BOOL displayYAxis;
 
@@ -24,6 +35,7 @@
 - (NSInteger)numberOfPointsInLine:(NSInteger)line;
 
 @end
+
 
 @interface NSIndexPath (BBLineGraph)
 

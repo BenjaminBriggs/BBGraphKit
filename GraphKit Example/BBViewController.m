@@ -11,7 +11,7 @@
 
 @interface BBViewController ()
 <BBGraphDataSource,
-BBGraphDelegate>
+BBLineGraphDelegate>
 
 @property (weak, nonatomic) IBOutlet BBLineGraph *lineGraph;
 @property (nonatomic, strong) NSArray *items;
@@ -74,4 +74,8 @@ BBGraphDelegate>
     return [UIColor greenColor];
 }
 
+- (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForLine:(NSUInteger)line
+{
+    return 1.0;
+}
 @end
