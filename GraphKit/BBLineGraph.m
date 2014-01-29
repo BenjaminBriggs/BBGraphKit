@@ -8,6 +8,7 @@
 
 #import "BBLineGraph.h"
 #import "BBGraph+SubclassingHooks.h"
+#import "UILabel+BBGraphKit.h"
 
 @interface BBLineGraph ()
 
@@ -15,6 +16,8 @@
 @property (nonatomic, strong) NSMutableDictionary *axisDataPointLayers; //an array of calayers;
 @property (nonatomic, strong) NSMutableDictionary *numberOfAxisLabels; //A number of labels per axis where the key is a BBLineGraphAxis enum
 @property (nonatomic, strong) NSMutableDictionary *intervalOfAxisLabels; //The interval to display axis labels
+
+@property (nonatomic, strong) NSMutableArray *labels;
 
 @property (nonatomic, assign) CGRect valueSpace;
 @property (nonatomic, assign) CGRect screenSpace;
@@ -75,10 +78,10 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 	if (!_screenSpaceView)
     {
 		_screenSpaceView = [[UIView alloc] initWithFrame:self.bounds];
-        //TODO: Add a property to colour this area
         _screenSpaceView.clipsToBounds = YES;
 		[self addSubview:_screenSpaceView];
 	}
+    _screenSpaceView.backgroundColor = self.graphBackgroundColor;
 	return _screenSpaceView;
 }
 
@@ -90,8 +93,6 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
-	self.screenSpaceView.frame = CGRectInset(self.bounds, 10, 10);
-    
 	if (!self.series) { [self populateSeries]; }
     
 	[self setUpValueSpace];
@@ -330,6 +331,12 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
             
         }
     }
+    [_numberOfAxisLabels setObject:@(numberOfLabels) forKey:@(axis)];
+    [_intervalOfAxisLabels setObject:@(intervalOfLabels) forKey:@(axis)];
+    
+    if(numberOfLabels == 0)
+        return;
+    
     UIBezierPath *linePath = [UIBezierPath bezierPath];
 
     //Iterate through the number of required labels and draw the markers
@@ -342,8 +349,6 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         else if (axis == BBGraphAxisY)
             labelValue = _lowestYValue + i * intervalOfLabels;
         
-        /* When we come to draw the label text we will use either the value or something like:
-         - (NSString *)lineGraph:(BBLineGraph *)lineGraph stringForLabelAtValue:(NSInteger)value onAxis:(BBLineGraphAxis)axis; */
         
         CGPoint axisPoint;
         CGPoint endAxisPoint;
@@ -392,6 +397,9 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         
         [linePath moveToPoint:axisPoint];
         [linePath addLineToPoint:endAxisPoint];
+        
+        //Draw the text
+        [self drawLabelOnAxis:axis atValue:labelValue];
     }
     
     NSString *layerKey;
@@ -424,6 +432,55 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 	// you could animate these
 	lineLayer.frame = self.screenSpaceView.frame;
 	lineLayer.path = linePath.CGPath;
+}
+
+- (void)drawLabelOnAxis:(BBGraphAxis)axis atValue:(CGFloat)value
+{
+    //Don't draw for 0
+    if (value == 0)
+        return;
+    /* When we come to draw the label text we will use either the value or something like:
+     - (NSString *)lineGraph:(BBLineGraph *)lineGraph stringForLabelAtValue:(NSInteger)value onAxis:(BBLineGraphAxis)axis; */
+    NSString *labelText;
+    if([self.delegate respondsToSelector:@selector(graph:stringForLabelAtValue:onAxis:)])
+    {
+        labelText = [self.delegate graph:self stringForLabelAtValue:value onAxis:axis];
+    }
+    else
+    {
+        labelText = [NSString stringWithFormat:@"%g", value];
+    }
+    CGRect labelRect;
+    CGPoint screenSpaceLabelPoint;
+    UILabel *label = [[UILabel alloc] init];
+
+    //The labels on the X axis will be 5% as tall as the graph area and as wide as possible
+    if (axis == BBGraphAxisX)
+    {
+        screenSpaceLabelPoint = [self convertPointToScreenSpace:
+                                 CGPointMake(value + (_scaleXAxisToValues ? - _lowestXValue : 0),
+                                             _scaleYAxisToValues ? - _lowestYValue : 0)];
+        labelRect = CGRectMake(screenSpaceLabelPoint.x,
+                               screenSpaceLabelPoint.y,
+                               self.screenSpace.size.width / [[_numberOfAxisLabels objectForKey:@(axis)] floatValue],
+                               self.screenSpace.size.height * .05);
+    }
+    else if (axis == BBGraphAxisY) //The Y axis will be 10% the width of the graph and as tall as possible
+    {
+        [label setTextAlignment:NSTextAlignmentRight];
+        screenSpaceLabelPoint = [self convertPointToScreenSpace:
+                                 CGPointMake(_scaleXAxisToValues ? - _lowestXValue : 0,
+                                             value - (_scaleYAxisToValues ?  _lowestYValue : 0))];
+        labelRect = CGRectMake(screenSpaceLabelPoint.x - self.screenSpace.size.width * .1,
+                               screenSpaceLabelPoint.y,
+                               self.screenSpace.size.width * .1,
+                               self.screenSpace.size.height / [[_numberOfAxisLabels objectForKey:@(axis)] floatValue]);
+        
+    }
+    
+    label.text = labelText;
+    [label sizeLabelToRect:labelRect];
+    [self addSubview:label];
 }
 
 - (void)drawLine:(NSInteger)line

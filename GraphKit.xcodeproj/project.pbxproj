@@ -19,6 +19,7 @@
 		B5163F811896E48B00EE01F3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5163F801896E48B00EE01F3 /* Images.xcassets */; };
 		B5163F9F1896E4DC00EE01F3 /* BBLineGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */; };
 		DC5588041899194800BD4566 /* BBGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5588031899194800BD4566 /* BBGraph.m */; };
+		DC55880E18994E3700BD4566 /* UILabel+BBGraphKit.m in Sources */ = {isa = PBXBuildFile; fileRef = DC55880D18994E3700BD4566 /* UILabel+BBGraphKit.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,8 @@
 		DC5588021899194800BD4566 /* BBGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBGraph.h; path = GraphKit/BBGraph.h; sourceTree = "<group>"; };
 		DC5588031899194800BD4566 /* BBGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBGraph.m; path = GraphKit/BBGraph.m; sourceTree = "<group>"; };
 		DC55880618991B4700BD4566 /* BBGraph+SubclassingHooks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BBGraph+SubclassingHooks.h"; path = "GraphKit/BBGraph+SubclassingHooks.h"; sourceTree = "<group>"; };
+		DC55880C18994E3700BD4566 /* UILabel+BBGraphKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UILabel+BBGraphKit.h"; path = "GraphKit/UILabel+BBGraphKit.h"; sourceTree = "<group>"; };
+		DC55880D18994E3700BD4566 /* UILabel+BBGraphKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UILabel+BBGraphKit.m"; path = "GraphKit/UILabel+BBGraphKit.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +72,8 @@
 				DC5588031899194800BD4566 /* BBGraph.m */,
 				B5163F9D1896E4DC00EE01F3 /* BBLineGraph.h */,
 				B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */,
+				DC55880C18994E3700BD4566 /* UILabel+BBGraphKit.h */,
+				DC55880D18994E3700BD4566 /* UILabel+BBGraphKit.m */,
 			);
 			name = GraphKit;
 			sourceTree = "<group>";
@@ -196,6 +201,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC55880E18994E3700BD4566 /* UILabel+BBGraphKit.m in Sources */,
 				DC5588041899194800BD4566 /* BBGraph.m in Sources */,
 				B5163F7F1896E48B00EE01F3 /* BBViewController.m in Sources */,
 				B5163F761896E48B00EE01F3 /* BBAppDelegate.m in Sources */,
@@ -308,6 +314,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GraphKit Example/GraphKit-Prefix.pch";
 				INFOPLIST_FILE = "GraphKit Example/GraphKit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
@@ -322,6 +329,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GraphKit/GraphKit-Prefix.pch";
 				INFOPLIST_FILE = "GraphKit/GraphKit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;

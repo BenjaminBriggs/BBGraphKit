@@ -42,7 +42,7 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 @optional
 
 - (UIColor *)graph:(BBGraph *)graph colorForSeries:(NSInteger)series;
-- (NSString *)graph:(BBGraph *)graph stringForLabelAtValue:(NSInteger)value onAxis:(BBGraphAxis)axis;
+- (NSString *)graph:(BBGraph *)graph stringForLabelAtValue:(CGFloat)value onAxis:(BBGraphAxis)axis;
 
 @end
 
@@ -54,6 +54,7 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 @property (nonatomic, assign) BBGraphAxis orderedAxis; // by defualt X;
 
 @property (nonatomic, strong) UIColor *axisColor;
+@property (nonatomic, strong) UIColor *graphBackgroundColor;
 @property (nonatomic, assign) CGFloat axisWidth;
 @property (nonatomic, assign) CGFloat axisDataPointWidth;
 @end
