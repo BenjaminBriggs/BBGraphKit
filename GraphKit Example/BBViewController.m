@@ -29,6 +29,8 @@ BBGraphDelegate>
     
     self.lineGraph.scaleYAxisToValues = YES;
     self.lineGraph.scaleXAxisToValues = YES;
+    
+    self.lineGraph.axisColor = [UIColor blueColor];
 
 	self.items = @[[NSValue valueWithCGPoint:CGPointMake(-1, 1000)],
                    [NSValue valueWithCGPoint:CGPointMake(0, 0)],

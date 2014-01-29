@@ -53,4 +53,5 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 
 @property (nonatomic, assign) BBGraphAxis orderedAxis; // by defualt X;
 
+@property (nonatomic, strong) UIColor *axisColor;
 @end

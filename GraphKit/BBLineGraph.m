@@ -34,17 +34,32 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 @implementation BBLineGraph
 @synthesize series = _series;
 
-- (instancetype)init
+- (instancetype)initWithCoder:(NSCoder *)coder
 {
-    self = [super init];
+    self = [super initWithCoder:coder];
     if (self) {
-        _lineLayers = [NSMutableDictionary dictionary];
-        _numberOfAxisLabels = [NSMutableDictionary dictionary];
-        _intervalOfAxisLabels = [NSMutableDictionary dictionary];
-        _scaleYAxisToValues = YES;
-        _scaleXAxisToValues = YES;
+        [self commonInit];
     }
     return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self commonInit];
+    }
+    return self;
+}
+
+
+- (void)commonInit
+{
+    _lineLayers = [NSMutableDictionary dictionary];
+    _numberOfAxisLabels = [NSMutableDictionary dictionary];
+    _intervalOfAxisLabels = [NSMutableDictionary dictionary];
+    _scaleYAxisToValues = YES;
+    _scaleXAxisToValues = YES;
 }
 
 - (UIView *)screenSpaceView
@@ -436,9 +451,6 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 	layer.strokeColor = [self colorForLine:line];
 	layer.fillColor = [UIColor clearColor].CGColor;
     
-    if(line == -1)
-        layer.strokeColor = [UIColor blackColor].CGColor;
-    
 	return layer;
 }
 
@@ -448,7 +460,11 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 {
     UIColor *color = nil;
     
-    if ([self.delegate respondsToSelector:@selector(graph:colorForSeries:)])
+    if(line == -1) //Axis colours
+    {
+        color = self.axisColor;
+    }
+    else if ([self.delegate respondsToSelector:@selector(graph:colorForSeries:)]) //Series colours
     {
         color = [self.delegate graph:self colorForSeries:line];
     }

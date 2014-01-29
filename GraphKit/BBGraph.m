@@ -10,6 +10,13 @@
 
 @implementation BBGraph
 
-
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _axisColor = [UIColor blackColor];
+    }
+    return self;
+}
 
 @end
