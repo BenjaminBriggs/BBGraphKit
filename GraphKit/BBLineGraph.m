@@ -35,6 +35,9 @@
 NSString *const xAxisLayerKey = @"xAxisLayer";
 NSString *const yAxisLayerKey = @"yAxisLayer";
 
+CGFloat const axisDataPointSize = 5.f;
+CGFloat const axisDataPointPadding = 1.f;
+
 @implementation BBLineGraph
 @synthesize series = _series;
 
@@ -218,16 +221,18 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 - (void)drawGraph
 {
-	for (NSInteger l = 0; l < [self numberOfLines]; l++)
-    {
-		[self drawLine:l];
-    }
-    
     if (_displayXAxis)
         [self drawAxis:BBGraphAxisX];
     
     if (_displayYAxis)
         [self drawAxis:BBGraphAxisY];
+    
+    for (NSInteger l = 0; l < [self numberOfLines]; l++)
+    {
+		[self drawLine:l];
+    }
+    
+
 }
 
 -(void)drawAxis:(BBGraphAxis)axis
@@ -386,12 +391,12 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         
         if (axis == BBGraphAxisX)
         {
-            endAxisPoint.y += 5;
+            endAxisPoint.y += axisDataPointSize;
             axisPoint.y -= 1.0f;
         }
         else if (axis == BBGraphAxisY)
         {
-            endAxisPoint.x -= 5;
+            endAxisPoint.x -= axisDataPointSize;
             axisPoint.x += 1.0f;
         }
         
@@ -437,7 +442,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 - (void)drawLabelOnAxis:(BBGraphAxis)axis atValue:(CGFloat)value
 {
     //Don't draw for 0
-    if (value == 0)
+    if (!_displayZeroAxisLabel && value == 0)
         return;
     /* When we come to draw the label text we will use either the value or something like:
      - (NSString *)lineGraph:(BBLineGraph *)lineGraph stringForLabelAtValue:(NSInteger)value onAxis:(BBLineGraphAxis)axis; */
@@ -457,30 +462,38 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     //The labels on the X axis will be 5% as tall as the graph area and as wide as possible
     if (axis == BBGraphAxisX)
     {
+        [label setTextAlignment:NSTextAlignmentCenter];
         screenSpaceLabelPoint = [self convertPointToScreenSpace:
                                  CGPointMake(value + (_scaleXAxisToValues ? - _lowestXValue : 0),
                                              _scaleYAxisToValues ? - _lowestYValue : 0)];
-        labelRect = CGRectMake(screenSpaceLabelPoint.x,
-                               screenSpaceLabelPoint.y,
-                               self.screenSpace.size.width / [[_numberOfAxisLabels objectForKey:@(axis)] floatValue],
+        CGFloat width = self.screenSpace.size.width / [[_numberOfAxisLabels objectForKey:@(axis)] floatValue];
+        labelRect = CGRectMake(screenSpaceLabelPoint.x - width / 2,
+                               screenSpaceLabelPoint.y + axisDataPointSize + axisDataPointPadding,
+                               width,
                                self.screenSpace.size.height * .05);
+        
     }
-    else if (axis == BBGraphAxisY) //The Y axis will be 10% the width of the graph and as tall as possible
+    else if (axis == BBGraphAxisY) //The labels on the Y axis will be 10% the width of the graph and as tall as possible
     {
         [label setTextAlignment:NSTextAlignmentRight];
         screenSpaceLabelPoint = [self convertPointToScreenSpace:
                                  CGPointMake(_scaleXAxisToValues ? - _lowestXValue : 0,
                                              value - (_scaleYAxisToValues ?  _lowestYValue : 0))];
+        CGFloat height = self.screenSpace.size.height / [[_numberOfAxisLabels objectForKey:@(axis)] floatValue];
         labelRect = CGRectMake(screenSpaceLabelPoint.x - self.screenSpace.size.width * .1,
-                               screenSpaceLabelPoint.y,
-                               self.screenSpace.size.width * .1,
-                               self.screenSpace.size.height / [[_numberOfAxisLabels objectForKey:@(axis)] floatValue]);
-        
+                               screenSpaceLabelPoint.y - height / 2,
+                               self.screenSpace.size.width * .1 - axisDataPointSize - axisDataPointPadding,
+                               height);
     }
     
     label.text = labelText;
+    //Get the font size that fits the label
+    //TODO: Keep track of the smallest font for an axis and apply it to all of the labels on that axis (maybe we can iterate over the labels array
+    //^ It should be split into a dictionary of arrays, or something similar so we can see what axis the labels are on before resizing them
     [label sizeLabelToRect:labelRect];
+    
     [self addSubview:label];
+    [self.labels addObject:label];
 }
 
 - (void)drawLine:(NSInteger)line

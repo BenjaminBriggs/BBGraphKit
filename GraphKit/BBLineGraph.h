@@ -28,6 +28,8 @@
 //Show lines at x=0 and y=0 (Default is YES)
 @property (nonatomic, assign) BOOL displayXAxis;
 @property (nonatomic, assign) BOOL displayYAxis;
+//It may be useful to not display a zero label on the axis (eg. a graph with bisecting axes)
+@property (nonatomic, assign) BOOL displayZeroAxisLabel;
 
 - (void)reloadData;
 
