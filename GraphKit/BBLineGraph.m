@@ -135,7 +135,7 @@ CGFloat const axisDataPointPadding = 1.f;
     {
         
 		// check how many points are in this line
-		NSInteger numberOfPoints = [self.dataSource graph:self
+		CGFloat numberOfPoints = [self.dataSource graph:self
 										 numberOfPointsInSeries:l];
         
 		// create an array to hold the points
@@ -307,7 +307,7 @@ CGFloat const axisDataPointPadding = 1.f;
 {
     //Draw lines perpendicular to the Axis for labeled data points
     NSUInteger numberOfLabels = 0;
-    NSUInteger intervalOfLabels = 0;
+    CGFloat intervalOfLabels = 0;
     
     //Get the information from the data source required to calculate & draw these
     if ([self.dataSource respondsToSelector:@selector(graph:intervalOfLabelsForAxis:)])
@@ -348,7 +348,7 @@ CGFloat const axisDataPointPadding = 1.f;
     for(int i = 0; i <= numberOfLabels; i++)
     {
         //Calculate the value of the data point to mark
-        NSInteger labelValue;
+        CGFloat labelValue;
         if (axis == BBGraphAxisX)
             labelValue = _lowestXValue + i * intervalOfLabels;
         else if (axis == BBGraphAxisY)

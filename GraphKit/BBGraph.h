@@ -32,7 +32,7 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 
 //There are two ways we can add data points to an axis.  Either by specifying a number of points to add or the increment value
 //If both are implemented then we will use intervalOfLabelsForAxis
-- (NSUInteger)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis;
+- (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis;
 - (NSUInteger)graph:(BBGraph *)graph numberOfLabelsForAxis:(BBGraphAxis)axis;
 
 @end

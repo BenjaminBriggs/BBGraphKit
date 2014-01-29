@@ -58,7 +58,7 @@ BBLineGraphDelegate>
 	return [self.items[indexPath.point] CGPointValue];
 }
 
-- (NSUInteger)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
+- (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
 {
     if (axis == BBGraphAxisY)
     {
