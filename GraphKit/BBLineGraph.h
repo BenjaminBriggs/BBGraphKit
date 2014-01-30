@@ -15,6 +15,8 @@
 @optional
 - (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForLine:(NSUInteger)line;
 
+//The number of length of time (seconds) it takes to draw each line.  If you implement this method you must call -animateGraph;
+- (NSTimeInterval)lineGraph:(BBLineGraph *)lineGraph animationDurationForLine:(NSUInteger)line;
 @end
 
 @interface BBLineGraph : BBGraph
@@ -32,6 +34,8 @@
 @property (nonatomic, assign) BOOL displayZeroAxisLabel;
 
 - (void)reloadData;
+
+- (void)animateGraph;
 
 - (NSInteger)numberOfLines;
 - (NSInteger)numberOfPointsInLine:(NSInteger)line;

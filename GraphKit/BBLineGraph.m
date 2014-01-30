@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong) NSMutableDictionary *lineLayers; //an array of calayers;
 @property (nonatomic, strong) NSMutableDictionary *axisDataPointLayers; //an array of calayers;
+@property (nonatomic, strong) NSMutableDictionary *axisLayers; //an array of calayers;
 @property (nonatomic, strong) NSMutableDictionary *numberOfAxisLabels; //A number of labels per axis where the key is a BBLineGraphAxis enum
 @property (nonatomic, strong) NSMutableDictionary *intervalOfAxisLabels; //The interval to display axis labels
 
@@ -70,6 +71,7 @@ CGFloat const axisDataPointPadding = 1.f;
 {
     _lineLayers = [NSMutableDictionary dictionary];
     _axisDataPointLayers = [NSMutableDictionary dictionary];
+    _axisLayers = [NSMutableDictionary dictionary];
     _numberOfAxisLabels = [NSMutableDictionary dictionary];
     _intervalOfAxisLabels = [NSMutableDictionary dictionary];
     
@@ -431,7 +433,7 @@ CGFloat const axisDataPointPadding = 1.f;
     [linePath addLineToPoint:screenEndPoint];
     
     // get the layer for the line;
-	CAShapeLayer *lineLayer = [self.lineLayers objectForKey:layerKey];
+	CAShapeLayer *lineLayer = [self.axisLayers objectForKey:layerKey];
     
 	// if there isn't a line
 	if (!lineLayer)
@@ -443,10 +445,9 @@ CGFloat const axisDataPointPadding = 1.f;
 		[self.axisView.layer addSublayer:lineLayer];
         
 		// save a refrence for later;
-		[self.lineLayers setObject:lineLayer forKey:layerKey];
+		[self.axisLayers setObject:lineLayer forKey:layerKey];
     }
     
-	// you could animate these
 	lineLayer.frame = self.bounds;
 	lineLayer.path = linePath.CGPath;
     
@@ -556,7 +557,6 @@ CGFloat const axisDataPointPadding = 1.f;
 		[self.axisDataPointLayers setObject:lineLayer forKey:layerKey];
     }
     
-	// you could animate these
 	lineLayer.frame = self.bounds;
 	lineLayer.path = linePath.CGPath;
 }
@@ -686,7 +686,11 @@ CGFloat const axisDataPointPadding = 1.f;
 		[self.lineLayers setObject:lineLayer forKey:@(line)];
     }
     
-	// you could animate these
+    //If animation is enabled don't draw the line yet
+    if([self.delegate respondsToSelector:@selector(lineGraph:animationDurationForLine:)])
+    {
+        [self animateGraph];
+    }
 	lineLayer.frame = self.bounds;
 	lineLayer.path = linePath.CGPath;
 }
@@ -725,6 +729,28 @@ CGFloat const axisDataPointPadding = 1.f;
 	return layer;
 }
 
+#pragma mark - Animation
+
+- (void)animateGraph
+{
+    if(![self.delegate respondsToSelector:@selector(lineGraph:animationDurationForLine:)])
+        return;
+    for(id lineKey in [_lineLayers allKeys])
+    {
+        CAShapeLayer *lineLayer = _lineLayers[lineKey];
+        
+        NSTimeInterval animationDuration = [self.delegate lineGraph:self animationDurationForLine:[lineKey integerValue]];
+        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+        animation.fromValue = @(0);
+        animation.toValue = @(1);
+        animation.removedOnCompletion = YES;
+        animation.duration = animationDuration;
+        animation.fillMode = kCAFillModeForwards;
+        
+        [lineLayer addAnimation:animation forKey:@"strokeEnd"];
+    }
+
+}
 #pragma mark - Helpers
 
 -(CGColorRef)colorForLine:(NSInteger)line

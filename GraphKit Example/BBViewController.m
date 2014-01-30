@@ -27,40 +27,36 @@ BBLineGraphDelegate>
     self.lineGraph.displayXAxis = YES;
     self.lineGraph.displayYAxis = YES;
     
-    self.lineGraph.scaleYAxisToValues = YES;
-    self.lineGraph.scaleXAxisToValues = YES;
+    self.lineGraph.scaleYAxisToValues = NO;
+    self.lineGraph.scaleXAxisToValues = NO;
     
     self.lineGraph.axisColor = [UIColor blueColor];
     
     self.lineGraph.axisDataPointWidth = 1.f;
     
-    self.lineGraph.xPadding = 0;
-    
-
-	self.items = @[[NSValue valueWithCGPoint:CGPointMake(-1, -999)],
-                   [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-				   [NSValue valueWithCGPoint:CGPointMake(1, -600)],
-				   [NSValue valueWithCGPoint:CGPointMake(2, 800)],
-				   [NSValue valueWithCGPoint:CGPointMake(3, 700)],
-				   [NSValue valueWithCGPoint:CGPointMake(4, 600)],
-				   [NSValue valueWithCGPoint:CGPointMake(5, 500)],
-				   [NSValue valueWithCGPoint:CGPointMake(6, 600)],
-				   [NSValue valueWithCGPoint:CGPointMake(7, 0)],
-				   [NSValue valueWithCGPoint:CGPointMake(8, 1201)],
-				   [NSValue valueWithCGPoint:CGPointMake(9, 900)],
-                   [NSValue valueWithCGPoint:CGPointMake(10, 1101)]];
+    self.lineGraph.xPadding = 5;
+    self.lineGraph.yPadding = 5;
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+//    [self.lineGraph animateGraph];
+}
 #pragma mark - BBLineGraphDataSource
 
 - (NSInteger)graph:(BBGraph *)graph numberOfPointsInSeries:(NSInteger)line
 {
-	return self.items.count;
+	return 10;
 }
 
 - (CGPoint)graph:(BBGraph *)graph valueForPointAtIndex:(NSIndexPath *)indexPath
 {
-	return [self.items[indexPath.point] CGPointValue];
+	return CGPointMake(arc4random_uniform(99), arc4random_uniform(99));
+}
+
+- (NSInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph
+{
+    return 3;
 }
 
 //- (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
@@ -79,11 +75,20 @@ BBLineGraphDelegate>
 
 - (UIColor *)graph:(BBGraph *)graph colorForSeries:(NSInteger)series
 {
-    return [UIColor greenColor];
+    return [UIColor colorWithHue:arc4random_uniform(100)/100.0 saturation:1 brightness:1 alpha:1];
 }
 
 - (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForLine:(NSUInteger)line
 {
     return 1.0;
+}
+
+- (NSString *)graph:(BBGraph *)graph stringForLabelAtValue:(CGFloat)value onAxis:(BBGraphAxis)axis
+{
+    return [NSString stringWithFormat:@"%.1f", value];
+}
+- (NSTimeInterval)lineGraph:(BBLineGraph *)lineGraph animationDurationForLine:(NSUInteger)line
+{
+    return 2;
 }
 @end
