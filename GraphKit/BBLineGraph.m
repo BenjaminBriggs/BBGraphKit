@@ -77,8 +77,8 @@ CGFloat const axisDataPointPadding = 1.f;
     _scaleXAxisToValues = YES;
     _displayXAxis = YES;
     _displayYAxis = YES;
-    _xAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
-    _yAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+    _xAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
+    _yAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
     
     //For dev
     self.layer.borderColor = [UIColor orangeColor].CGColor;
@@ -114,6 +114,9 @@ CGFloat const axisDataPointPadding = 1.f;
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
+    //A good idea to impose some extra padding to accomodate axis ends etc
+    self.screenSpaceView.frame = CGRectInset(self.bounds, 10, 10);
+    self.axisView.frame = CGRectInset(self.bounds, 10, 10);
 	if (!self.series) { [self populateSeries]; }
     
 	[self setUpValueSpace];
@@ -357,7 +360,7 @@ CGFloat const axisDataPointPadding = 1.f;
             maxLabelWidth = MAX(size.width, maxLabelWidth);
             maxLabelHeight = MAX(size.height, maxLabelHeight);
         }
-        if (axis == BBGraphAxisX)
+        if (axis == BBGraphAxisY)
         {
             insets.width = maxLabelWidth + axisDataPointPadding + axisDataPointSize;
         }
@@ -566,7 +569,28 @@ CGFloat const axisDataPointPadding = 1.f;
     CGRect labelRect;
     CGPoint screenSpaceLabelPoint;
     UILabel *label = [[UILabel alloc] init];
-
+    
+    CGFloat height;
+    // iOS 7+
+    if ([labelText respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)])
+    {
+        CGRect rect = [labelText boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)
+                                              options:NSStringDrawingUsesLineFragmentOrigin
+                                           attributes:@{NSFontAttributeName:_yAxisFont}
+                                              context:nil];
+        height = rect.size.height;
+    }
+    // iOS < 7
+    else
+    {
+        height = [labelText sizeWithFont:_yAxisFont
+                       constrainedToSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)].height;
+    }
+    
+    [label setTextAlignment:NSTextAlignmentRight];
+    screenSpaceLabelPoint = [self convertPointToScreenSpace:
+                             CGPointMake(_scaleXAxisToValues ? - _lowestXValue : 0,
+                                         value - (_scaleYAxisToValues ?  _lowestYValue : 0))];
     //The labels on the X axis will be 5% as tall as the graph area and as wide as possible
     if (axis == BBGraphAxisX)
     {
@@ -578,19 +602,16 @@ CGFloat const axisDataPointPadding = 1.f;
         labelRect = CGRectMake(screenSpaceLabelPoint.x - width / 2,
                                screenSpaceLabelPoint.y + axisDataPointSize + axisDataPointPadding,
                                width,
-                               self.screenSpace.size.height * .05);
+                               height);
         
     }
     else if (axis == BBGraphAxisY) //The labels on the Y axis will be 10% the width of the graph and as tall as possible
     {
-        [label setTextAlignment:NSTextAlignmentRight];
-        screenSpaceLabelPoint = [self convertPointToScreenSpace:
-                                 CGPointMake(_scaleXAxisToValues ? - _lowestXValue : 0,
-                                             value - (_scaleYAxisToValues ?  _lowestYValue : 0))];
-        CGFloat height = self.screenSpace.size.height / [[_numberOfAxisLabels objectForKey:@(axis)] floatValue];
-        labelRect = CGRectMake(screenSpaceLabelPoint.x - self.screenSpace.size.width * .1,
+
+        CGFloat width = self.axisView.frame.origin.x;
+        labelRect = CGRectMake(screenSpaceLabelPoint.x - width - axisDataPointPadding - axisDataPointSize,
                                screenSpaceLabelPoint.y - height / 2,
-                               self.screenSpace.size.width * .1 - axisDataPointSize - axisDataPointPadding,
+                               width,
                                height);
     }
     

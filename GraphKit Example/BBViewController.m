@@ -32,7 +32,7 @@ BBLineGraphDelegate>
     
     self.lineGraph.axisColor = [UIColor blueColor];
     
-    self.lineGraph.axisDataPointWidth = 2.f;
+    self.lineGraph.axisDataPointWidth = 1.f;
 
 	self.items = @[[NSValue valueWithCGPoint:CGPointMake(-1, 1000)],
                    [NSValue valueWithCGPoint:CGPointMake(0, 0)],
@@ -43,7 +43,7 @@ BBLineGraphDelegate>
 				   [NSValue valueWithCGPoint:CGPointMake(5, 500)],
 				   [NSValue valueWithCGPoint:CGPointMake(6, 600)],
 				   [NSValue valueWithCGPoint:CGPointMake(7, 0)],
-				   [NSValue valueWithCGPoint:CGPointMake(8, -1200)],
+				   [NSValue valueWithCGPoint:CGPointMake(8, 1200)],
 				   [NSValue valueWithCGPoint:CGPointMake(9, 900)],
                    [NSValue valueWithCGPoint:CGPointMake(10, 1000)]];
 }
