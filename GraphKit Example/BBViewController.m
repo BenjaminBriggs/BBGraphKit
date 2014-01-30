@@ -27,10 +27,12 @@ BBLineGraphDelegate>
     self.lineGraph.displayXAxis = YES;
     self.lineGraph.displayYAxis = YES;
     
-    self.lineGraph.scaleYAxisToValues = YES;
-    self.lineGraph.scaleXAxisToValues = YES;
+    self.lineGraph.scaleYAxisToValues = NO;
+    self.lineGraph.scaleXAxisToValues = NO;
     
     self.lineGraph.axisColor = [UIColor blueColor];
+    
+    self.lineGraph.axisDataPointWidth = 2.f;
 
 	self.items = @[[NSValue valueWithCGPoint:CGPointMake(-1, 1000)],
                    [NSValue valueWithCGPoint:CGPointMake(0, 0)],
@@ -66,7 +68,10 @@ BBLineGraphDelegate>
     }
     return 1;
 }
-
+- (NSUInteger)graph:(BBGraph *)graph numberOfLabelsForAxis:(BBGraphAxis)axis
+{
+    return 10;
+}
 #pragma mark - BBLineGraphDelegate
 
 - (UIColor *)graph:(BBGraph *)graph colorForSeries:(NSInteger)series

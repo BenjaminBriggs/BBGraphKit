@@ -8,7 +8,6 @@
 
 #import "BBLineGraph.h"
 #import "BBGraph+SubclassingHooks.h"
-#import "UILabel+BBGraphKit.h"
 
 @interface BBLineGraph ()
 
@@ -18,11 +17,13 @@
 @property (nonatomic, strong) NSMutableDictionary *intervalOfAxisLabels; //The interval to display axis labels
 
 @property (nonatomic, strong) NSMutableArray *labels;
+@property (nonatomic, strong) NSMutableArray *axisLabelStrings; //Array of dictionaries containing the strings for each axis [BBLineGraphAxis][@(value)]
 
 @property (nonatomic, assign) CGRect valueSpace;
 @property (nonatomic, assign) CGRect screenSpace;
 
 @property (nonatomic, strong) UIView *screenSpaceView;
+@property (nonatomic, strong) UIView *axisView;
 
 @property (nonatomic, assign) CGFloat highestYValue;
 @property (nonatomic, assign) CGFloat highestXValue;
@@ -40,6 +41,8 @@ CGFloat const axisDataPointPadding = 1.f;
 
 @implementation BBLineGraph
 @synthesize series = _series;
+@synthesize yAxisFont = _yAxisFont;
+@synthesize xAxisFont = _xAxisFont;
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
@@ -74,8 +77,23 @@ CGFloat const axisDataPointPadding = 1.f;
     _scaleXAxisToValues = YES;
     _displayXAxis = YES;
     _displayYAxis = YES;
+    _xAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+    _yAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+    
+    //For dev
+    self.layer.borderColor = [UIColor orangeColor].CGColor;
+    self.layer.borderWidth = 2.f;
 }
 
+- (UIView *)axisView
+{
+    if(!_axisView)
+    {
+        _axisView = [[UIView alloc] initWithFrame:self.bounds];
+        [self addSubview:_axisView];
+    }
+    return _axisView;
+}
 - (UIView *)screenSpaceView
 {
 	if (!_screenSpaceView)
@@ -221,6 +239,11 @@ CGFloat const axisDataPointPadding = 1.f;
 
 - (void)drawGraph
 {
+    //Will work out the amount of space to leave around the graph by grabbing the text for the labels
+    //In order to do this we will need to grab all of the data for label text from the delegate so we
+    //save that into a property for re-use later
+    [self setupGraphSpace];
+    
     if (_displayXAxis)
         [self drawAxis:BBGraphAxisX];
     
@@ -231,6 +254,127 @@ CGFloat const axisDataPointPadding = 1.f;
     {
 		[self drawLine:l];
     }
+    
+
+}
+
+- (void)setupGraphSpace
+{
+    //At present we add the padding regardless of whether or not scale(x/y)AxisToValues is set to yes
+    //We should only pad the graph if the values would otherwise not fit within the bounds of the graph
+    //TODO: Implement ^ OR add a property to force the axis labels to sit outside of graph space (maybe preferred
+    //as should be easier to implement)
+
+    _axisLabelStrings = [NSMutableArray array];
+    
+    CGSize insets = CGSizeZero;
+    
+    for(int i = 0; i < 2; i++) //Iterate over the axis type enum which we know contains to types
+    {
+        BBGraphAxis axis = (BBGraphAxis)i;
+        CGFloat maxLabelWidth = 0.f;
+        CGFloat maxLabelHeight = 0.f;
+        
+        //Get the number & interval of axis labels
+        NSUInteger numberOfLabels = 0;
+        CGFloat intervalOfLabels = 0.f;
+        
+        //Get the information from the data source required to calculate & draw these
+        if ([self.dataSource respondsToSelector:@selector(graph:intervalOfLabelsForAxis:)])
+        {
+            intervalOfLabels = [self.dataSource graph:self intervalOfLabelsForAxis:axis];
+            if(axis == BBGraphAxisX)
+            {
+                numberOfLabels = floor((_highestXValue - _lowestXValue) / intervalOfLabels);
+            }
+            else if (axis == BBGraphAxisY)
+            {
+                numberOfLabels = floor((_highestYValue - _lowestYValue) / intervalOfLabels);
+                
+            }
+        }
+        else if ([self.dataSource respondsToSelector:@selector(graph:numberOfLabelsForAxis:)])
+        {
+            numberOfLabels = [self.dataSource graph:self numberOfLabelsForAxis:axis];
+            if(axis == BBGraphAxisX)
+            {
+                intervalOfLabels = (_highestXValue - _lowestXValue) / numberOfLabels;
+            }
+            else if (axis == BBGraphAxisY)
+            {
+                intervalOfLabels = (_highestYValue - _lowestYValue) / numberOfLabels;
+                
+            }
+        }
+        
+        //Iterate through the labels and find their associated strings
+        for(int j = 0; j <= numberOfLabels; j++)
+        {
+            NSString *labelText;
+            //Calculate the value of the label we need
+            CGFloat labelValue;
+            if (axis == BBGraphAxisX)
+                labelValue = _lowestXValue + j * intervalOfLabels;
+            else
+                labelValue = _lowestYValue + j * intervalOfLabels;
+            
+            if([self.delegate respondsToSelector:@selector(graph:stringForLabelAtValue:onAxis:)])
+            {
+                labelText = [self.delegate graph:self stringForLabelAtValue:labelValue onAxis:axis];
+            }
+            else
+            {
+                labelText = [NSString stringWithFormat:@"%g", labelValue];
+            }
+            
+            //Save the label to a property to prevent calling the above delegate method more than once per label per reload
+            if(j == 0)
+            {
+                [_axisLabelStrings addObject:[NSMutableDictionary dictionary]];
+            }
+            [_axisLabelStrings[axis] setObject:labelText forKey:@(labelValue)];
+            
+            //Calculate the size of the label which would be created
+            CGSize size = CGSizeZero;
+            UIFont *font = axis == BBGraphAxisX ? _xAxisFont : _yAxisFont;
+            
+            // iOS 7+
+            if ([labelText respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)])
+            {
+                CGRect rect = [labelText boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)
+                                                      options:NSStringDrawingUsesLineFragmentOrigin
+                                                   attributes:@{NSFontAttributeName:font}
+                                                      context:nil];
+                size = rect.size;
+            }
+            // iOS < 7
+            else
+            {
+                size = [labelText sizeWithFont:font
+                             constrainedToSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+            }
+            
+            maxLabelWidth = MAX(size.width, maxLabelWidth);
+            maxLabelHeight = MAX(size.height, maxLabelHeight);
+        }
+        if (axis == BBGraphAxisX)
+        {
+            insets.width = maxLabelWidth + axisDataPointPadding + axisDataPointSize;
+        }
+        else
+        {
+            insets.height = maxLabelHeight + axisDataPointPadding + axisDataPointSize;
+        }
+        
+        [_numberOfAxisLabels setObject:@(numberOfLabels) forKey:@(axis)];
+        [_intervalOfAxisLabels setObject:@(intervalOfLabels) forKey:@(axis)];
+    }
+    CGRect screenSpaceFrame = self.screenSpaceView.frame;
+    screenSpaceFrame.origin.x += insets.width;
+    screenSpaceFrame.size.width -= insets.width;
+    screenSpaceFrame.size.height -= insets.height;
+    self.screenSpaceView.frame = screenSpaceFrame;
+    self.axisView.frame = screenSpaceFrame;
     
 
 }
@@ -290,54 +434,24 @@ CGFloat const axisDataPointPadding = 1.f;
 		lineLayer = [self styledLayerForLine:-1];
         
 		// add the layer to the view hierarchy.  We add to self and not the screenView to prevent clipping
-		[self.layer addSublayer:lineLayer];
+		[self.axisView.layer addSublayer:lineLayer];
         
 		// save a refrence for later;
 		[self.lineLayers setObject:lineLayer forKey:layerKey];
     }
     
 	// you could animate these
-	lineLayer.frame = self.screenSpaceView.frame;
+	lineLayer.frame = self.bounds;
 	lineLayer.path = linePath.CGPath;
     
-    [self drawAxisDataPointsOnAxis:axis];
+    [self drawDataPointsOnAxis:axis];
 }
 
-- (void)drawAxisDataPointsOnAxis:(BBGraphAxis)axis
+- (void)drawDataPointsOnAxis:(BBGraphAxis)axis
 {
     //Draw lines perpendicular to the Axis for labeled data points
-    NSUInteger numberOfLabels = 0;
-    CGFloat intervalOfLabels = 0;
-    
-    //Get the information from the data source required to calculate & draw these
-    if ([self.dataSource respondsToSelector:@selector(graph:intervalOfLabelsForAxis:)])
-    {
-        intervalOfLabels = [self.dataSource graph:self intervalOfLabelsForAxis:axis];
-        if(axis == BBGraphAxisX)
-        {
-            numberOfLabels = floor((_highestXValue - _lowestXValue) / intervalOfLabels);
-        }
-        else if (axis == BBGraphAxisY)
-        {
-            numberOfLabels = floor((_highestYValue - _lowestYValue) / intervalOfLabels);
-            
-        }
-    }
-    else if ([self.dataSource respondsToSelector:@selector(graph:numberOfLabelsForAxis:)])
-    {
-        numberOfLabels = [self.dataSource graph:self numberOfLabelsForAxis:axis];
-        if(axis == BBGraphAxisX)
-        {
-            intervalOfLabels = (_highestXValue - _lowestXValue) / numberOfLabels;
-        }
-        else if (axis == BBGraphAxisY)
-        {
-            intervalOfLabels = (_highestYValue - _lowestYValue) / numberOfLabels;
-            
-        }
-    }
-    [_numberOfAxisLabels setObject:@(numberOfLabels) forKey:@(axis)];
-    [_intervalOfAxisLabels setObject:@(intervalOfLabels) forKey:@(axis)];
+    NSUInteger numberOfLabels = [[_numberOfAxisLabels objectForKey:@(axis)] unsignedIntegerValue];
+    CGFloat intervalOfLabels = [[_intervalOfAxisLabels objectForKey:@(axis)] unsignedIntegerValue];
     
     if(numberOfLabels == 0)
         return;
@@ -428,14 +542,14 @@ CGFloat const axisDataPointPadding = 1.f;
 		lineLayer = [self styledLayerForLine:-2];
         
 		// add the layer to the view hierarchy.  We add to self and not the screenView to prevent clipping
-		[self.layer addSublayer:lineLayer];
+		[self.axisView.layer addSublayer:lineLayer];
         
 		// save a refrence for later;
 		[self.axisDataPointLayers setObject:lineLayer forKey:layerKey];
     }
     
 	// you could animate these
-	lineLayer.frame = self.screenSpaceView.frame;
+	lineLayer.frame = self.bounds;
 	lineLayer.path = linePath.CGPath;
 }
 
@@ -444,17 +558,11 @@ CGFloat const axisDataPointPadding = 1.f;
     //Don't draw for 0
     if (!_displayZeroAxisLabel && value == 0)
         return;
-    /* When we come to draw the label text we will use either the value or something like:
-     - (NSString *)lineGraph:(BBLineGraph *)lineGraph stringForLabelAtValue:(NSInteger)value onAxis:(BBLineGraphAxis)axis; */
-    NSString *labelText;
-    if([self.delegate respondsToSelector:@selector(graph:stringForLabelAtValue:onAxis:)])
-    {
-        labelText = [self.delegate graph:self stringForLabelAtValue:value onAxis:axis];
-    }
-    else
-    {
-        labelText = [NSString stringWithFormat:@"%g", value];
-    }
+
+    NSString *labelText = _axisLabelStrings[axis][@(value)];
+
+    //TODO: get label text from our property
+    
     CGRect labelRect;
     CGPoint screenSpaceLabelPoint;
     UILabel *label = [[UILabel alloc] init];
@@ -490,9 +598,12 @@ CGFloat const axisDataPointPadding = 1.f;
     //Get the font size that fits the label
     //TODO: Keep track of the smallest font for an axis and apply it to all of the labels on that axis (maybe we can iterate over the labels array
     //^ It should be split into a dictionary of arrays, or something similar so we can see what axis the labels are on before resizing them
-    [label sizeLabelToRect:labelRect];
+    label.frame = labelRect;
+    label.font = axis == BBGraphAxisX ? _xAxisFont : _yAxisFont;
     
-    [self addSubview:label];
+    //The plan was going to be to get the font size after it adjustsFontSizeToFitWidth but the label.font doesn't seem to change
+    //It may mean we have to go back to the category on UIlabel
+    [self.axisView addSubview:label];
     [self.labels addObject:label];
 }
 
@@ -561,14 +672,17 @@ CGFloat const axisDataPointPadding = 1.f;
     
     if(line == -2)
     {
+        layer.lineJoin = kCALineJoinBevel;
         layer.lineWidth = self.axisDataPointWidth;
     }
     else if(line == -1)
     {
+        layer.lineJoin = kCALineJoinBevel;
         layer.lineWidth = self.axisWidth;
     }
     else
     {
+        layer.lineJoin = kCALineJoinRound;
         if([self.delegate respondsToSelector:@selector(lineGraph:widthForLine:)])
         {
             layer.lineWidth = [self.delegate lineGraph:self widthForLine:line];
@@ -578,7 +692,6 @@ CGFloat const axisDataPointPadding = 1.f;
             layer.lineWidth = 2.f;
         }
     }
-	layer.lineJoin = kCALineJoinRound;
     
 	layer.strokeColor = [self colorForLine:line];
 	layer.fillColor = [UIColor clearColor].CGColor;
