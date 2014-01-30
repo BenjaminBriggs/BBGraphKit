@@ -457,7 +457,7 @@ CGFloat const axisDataPointPadding = 1.f;
 {
     //Draw lines perpendicular to the Axis for labeled data points
     NSUInteger numberOfLabels = [[_numberOfAxisLabels objectForKey:@(axis)] unsignedIntegerValue];
-    CGFloat intervalOfLabels = [[_intervalOfAxisLabels objectForKey:@(axis)] unsignedIntegerValue];
+    CGFloat intervalOfLabels = [[_intervalOfAxisLabels objectForKey:@(axis)] floatValue];
     
     if(numberOfLabels == 0)
         return;
