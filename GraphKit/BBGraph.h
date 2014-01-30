@@ -62,5 +62,9 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 @property (nonatomic, strong) UIFont *xAxisFont;
 @property (nonatomic, strong) UIFont *yAxisFont;
 
+//Padding between the outer bounds of the view and the outer edge of the axis (default = 10)
+@property (nonatomic, assign) CGFloat xPadding;
+@property (nonatomic, assign) CGFloat yPadding;
+
 
 @end

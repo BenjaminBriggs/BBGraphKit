@@ -43,6 +43,8 @@ CGFloat const axisDataPointPadding = 1.f;
 @synthesize series = _series;
 @synthesize yAxisFont = _yAxisFont;
 @synthesize xAxisFont = _xAxisFont;
+@synthesize xPadding = _xPadding;
+@synthesize yPadding = _yPadding;
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
@@ -79,10 +81,8 @@ CGFloat const axisDataPointPadding = 1.f;
     _displayYAxis = YES;
     _xAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
     _yAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
-    
-    //For dev
-    self.layer.borderColor = [UIColor orangeColor].CGColor;
-    self.layer.borderWidth = 2.f;
+    _xPadding = 10.f;
+    _yPadding = 10.f;
 }
 
 - (UIView *)axisView
@@ -115,8 +115,8 @@ CGFloat const axisDataPointPadding = 1.f;
 {
 	[super layoutSubviews];
     //A good idea to impose some extra padding to accomodate axis ends etc
-    self.screenSpaceView.frame = CGRectInset(self.bounds, 10, 10);
-    self.axisView.frame = CGRectInset(self.bounds, 10, 10);
+    self.screenSpaceView.frame = CGRectInset(self.bounds, self.xPadding, self.yPadding);
+    self.axisView.frame = self.screenSpaceView.frame;
 	if (!self.series) { [self populateSeries]; }
     
 	[self setUpValueSpace];
