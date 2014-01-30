@@ -8,6 +8,7 @@
 
 #import "BBLineGraph.h"
 #import "BBGraph+SubclassingHooks.h"
+#import <tgmath.h>
 
 @interface BBLineGraph ()
 
@@ -321,6 +322,8 @@ CGFloat const axisDataPointPadding = 1.f;
             else
                 labelValue = _lowestYValue + j * intervalOfLabels;
             
+            labelValue -= fmodf(labelValue, intervalOfLabels);
+            
             if([self.delegate respondsToSelector:@selector(graph:stringForLabelAtValue:onAxis:)])
             {
                 labelText = [self.delegate graph:self stringForLabelAtValue:labelValue onAxis:axis];
@@ -468,8 +471,10 @@ CGFloat const axisDataPointPadding = 1.f;
         CGFloat labelValue;
         if (axis == BBGraphAxisX)
             labelValue = _lowestXValue + i * intervalOfLabels;
-        else if (axis == BBGraphAxisY)
+        else
             labelValue = _lowestYValue + i * intervalOfLabels;
+        
+        labelValue -= fmodf(labelValue, intervalOfLabels);
         
         
         CGPoint axisPoint;
