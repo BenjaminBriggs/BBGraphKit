@@ -79,6 +79,7 @@ CGFloat const axisDataPointPadding = 1.f;
     //Defaults
     self.axisDataPointWidth = 1.0f;
     self.axisWidth = 2.0f;
+    self.axisLabelColor = [UIColor blackColor];
     _scaleYAxisToValues = YES;
     _scaleXAxisToValues = YES;
     _displayXAxis = YES;
@@ -657,6 +658,7 @@ CGFloat const axisDataPointPadding = 1.f;
     //^ It should be split into a dictionary of arrays, or something similar so we can see what axis the labels are on before resizing them
     label.frame = labelRect;
     label.font = axis == BBGraphAxisX ? _xAxisFont : _yAxisFont;
+    label.textColor = self.axisLabelColor;
     
     //The plan was going to be to get the font size after it adjustsFontSizeToFitWidth but the label.font doesn't seem to change
     //It may mean we have to go back to the category on UIlabel

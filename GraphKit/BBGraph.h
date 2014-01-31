@@ -57,6 +57,7 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 @property (nonatomic, assign) CGFloat axisDataPointWidth;
 
 @property (nonatomic, strong) UIColor *axisColor;
+@property (nonatomic, strong) UIColor *axisLabelColor;
 @property (nonatomic, strong) UIColor *graphBackgroundColor;
 
 @property (nonatomic, strong) UIFont *xAxisFont;
