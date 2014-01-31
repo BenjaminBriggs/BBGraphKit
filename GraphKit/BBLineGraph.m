@@ -155,7 +155,7 @@ CGFloat const axisDataPointPadding = 1.f;
             _lowestYValue = 0;
     }
     //Check that we have enough data to draw a graph
-    if (_lowestXValue != _highestXValue && _lowestYValue != _highestYValue)
+    if (_lowestXValue == _highestXValue || _lowestYValue == _highestYValue)
     {
         return NO;
     }
