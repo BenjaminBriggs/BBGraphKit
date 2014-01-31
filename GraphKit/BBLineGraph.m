@@ -123,6 +123,24 @@ CGFloat const axisDataPointPadding = 1.f;
     self.axisView.frame = self.screenSpaceView.frame;
 	if (!self.series) { [self populateSeries]; }
     
+    if(![self validateData])
+        return;
+    
+	[self setUpValueSpace];
+	[self drawGraph];
+}
+
+- (void)reloadData
+{
+	[self populateSeries];
+    if(![self validateData])
+        return;
+	[self setUpValueSpace];
+	[self drawGraph];
+}
+
+- (BOOL)validateData
+{
     //If all values on an axis are the same the highest and lowest values are not set correctly.  This resolves that:
     if (_lowestXValue == _highestXValue)
     {
@@ -136,24 +154,13 @@ CGFloat const axisDataPointPadding = 1.f;
         if ( _highestYValue > 0)
             _lowestYValue = 0;
     }
-    
     //Check that we have enough data to draw a graph
     if (_lowestXValue != _highestXValue && _lowestYValue != _highestYValue)
     {
-        return;
+        return NO;
     }
-    
-	[self setUpValueSpace];
-	[self drawGraph];
+    return YES;
 }
-
-- (void)reloadData
-{
-	[self populateSeries];
-	[self setUpValueSpace];
-	[self drawGraph];
-}
-
 - (void)populateSeries
 {
 	// get the number of lines in the graph
