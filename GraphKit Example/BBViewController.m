@@ -51,7 +51,7 @@ BBLineGraphDelegate>
 
 - (CGPoint)graph:(BBGraph *)graph valueForPointAtIndex:(NSIndexPath *)indexPath
 {
-	return CGPointMake(arc4random_uniform(99), arc4random_uniform(99));
+	return CGPointMake(arc4random_uniform(160), arc4random_uniform(101));
 }
 
 - (NSInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph
@@ -59,18 +59,18 @@ BBLineGraphDelegate>
     return 3;
 }
 
-//- (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
-//{
-//    if (axis == BBGraphAxisY)
-//    {
-//        return 100;
-//    }
-//    return 1;
-//}
-- (NSUInteger)graph:(BBGraph *)graph numberOfLabelsForAxis:(BBGraphAxis)axis
+- (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
 {
-    return 7;
+    if (axis == BBGraphAxisY)
+    {
+        return 10;
+    }
+    return 10;
 }
+//- (NSUInteger)graph:(BBGraph *)graph numberOfLabelsForAxis:(BBGraphAxis)axis
+//{
+//    return 7;
+//}
 #pragma mark - BBLineGraphDelegate
 
 - (UIColor *)graph:(BBGraph *)graph colorForSeries:(NSInteger)series

@@ -74,6 +74,7 @@ CGFloat const axisDataPointPadding = 1.f;
     _axisLayers = [NSMutableDictionary dictionary];
     _numberOfAxisLabels = [NSMutableDictionary dictionary];
     _intervalOfAxisLabels = [NSMutableDictionary dictionary];
+    _labels = [NSMutableArray array];
     
     //Defaults
     self.axisDataPointWidth = 1.0f;
@@ -250,6 +251,9 @@ CGFloat const axisDataPointPadding = 1.f;
     //save that into a property for re-use later
     [self setupGraphSpace];
     
+    //Remove the axis labels which we will redraw
+    [_labels makeObjectsPerformSelector:@selector(removeFromSuperview)];
+
     if (_displayXAxis)
         [self drawAxis:BBGraphAxisX];
     
