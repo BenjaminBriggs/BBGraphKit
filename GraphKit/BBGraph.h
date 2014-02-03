@@ -66,5 +66,4 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 @property (nonatomic, assign) CGFloat xPadding;
 @property (nonatomic, assign) CGFloat yPadding;
 
-
 @end

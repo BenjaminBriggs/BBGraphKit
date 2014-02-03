@@ -77,7 +77,7 @@ CGFloat const axisDataPointPadding = 1.f;
     
     //Defaults
     self.axisDataPointWidth = 1.0f;
-    self.axisWidth = 2.0f;
+    self.axisWidth = 1.0f;
     _scaleYAxisToValues = YES;
     _scaleXAxisToValues = YES;
     _displayXAxis = YES;
@@ -222,11 +222,32 @@ CGFloat const axisDataPointPadding = 1.f;
 	self.series = lines;
     
 	// finaly save the high and low values
-	_highestYValue = highestYValue;
-	_highestXValue = highestXValue;
+	_highestYValue = [self roundValue:highestYValue Up:YES];
+	_highestXValue = [self roundValue:highestXValue Up:YES];
     
-	_lowestYValue = lowestYValue;
-	_lowestXValue = lowestXValue;
+	_lowestYValue = [self roundValue:lowestYValue Up:NO];
+	_lowestXValue = [self roundValue:lowestXValue Up:NO];
+    
+}
+
+- (CGFloat)roundValue:(CGFloat)number Up:(BOOL)up
+{
+    double numberOfSignificentFigures = ceil(log10(fabs(number)));
+    
+    int multiple = pow(10, numberOfSignificentFigures-1);
+    
+    int u;
+    
+    if (up)
+    {
+        u = ceil(number/multiple);
+    }
+    else
+    {
+        u = floor(number/multiple);
+    }
+    
+    return u * multiple;
 }
 
 - (void)setUpValueSpace
@@ -377,6 +398,10 @@ CGFloat const axisDataPointPadding = 1.f;
         [_numberOfAxisLabels setObject:@(numberOfLabels) forKey:@(axis)];
         [_intervalOfAxisLabels setObject:@(intervalOfLabels) forKey:@(axis)];
     }
+    
+    
+    // round up the highest values
+    
     CGRect screenSpaceFrame = self.screenSpaceView.frame;
     screenSpaceFrame.origin.x += insets.width;
     screenSpaceFrame.size.width -= insets.width;
@@ -576,6 +601,7 @@ CGFloat const axisDataPointPadding = 1.f;
     UILabel *label = [[UILabel alloc] init];
     
     CGFloat height;
+    
     // iOS 7+
     if ([labelText respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)])
     {

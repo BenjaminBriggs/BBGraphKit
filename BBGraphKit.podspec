@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "BBGraphKit"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "A plug and play graphing library"
   s.homepage     = "https://github.com/BenjaminBriggs/BBGraphKit"
 
@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author       = { "Benjamin Briggs" => "ben.briggs@me.com" }
   s.source       = { 
     :git => "https://github.com/BenjaminBriggs/BBGraphKit.git",
-    :tag => "0.0.1"
+    :tag => "0.0.2"
   }
 
   s.platform     = :ios, '6.0'

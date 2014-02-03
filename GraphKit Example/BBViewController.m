@@ -30,7 +30,7 @@ BBLineGraphDelegate>
     self.lineGraph.scaleYAxisToValues = NO;
     self.lineGraph.scaleXAxisToValues = NO;
     
-    self.lineGraph.axisColor = [UIColor blueColor];
+    self.lineGraph.axisColor = [UIColor lightGrayColor];
     
     self.lineGraph.axisDataPointWidth = 1.f;
     
@@ -51,7 +51,7 @@ BBLineGraphDelegate>
 
 - (CGPoint)graph:(BBGraph *)graph valueForPointAtIndex:(NSIndexPath *)indexPath
 {
-	return CGPointMake(arc4random_uniform(99), arc4random_uniform(99));
+	return CGPointMake(indexPath.point*100, arc4random_uniform(200));
 }
 
 - (NSInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph
@@ -59,23 +59,31 @@ BBLineGraphDelegate>
     return 3;
 }
 
-//- (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
-//{
-//    if (axis == BBGraphAxisY)
-//    {
-//        return 100;
-//    }
-//    return 1;
-//}
 - (NSUInteger)graph:(BBGraph *)graph numberOfLabelsForAxis:(BBGraphAxis)axis
 {
-    return 7;
+    return 4;
 }
 #pragma mark - BBLineGraphDelegate
 
 - (UIColor *)graph:(BBGraph *)graph colorForSeries:(NSInteger)series
 {
-    return [UIColor colorWithHue:arc4random_uniform(100)/100.0 saturation:1 brightness:1 alpha:1];
+    switch (series) {
+        case 0:
+            return [UIColor colorWithHue:0.011 saturation:0.623 brightness:0.894 alpha:1.000];
+            break;
+            
+        case 1:
+            return [UIColor colorWithHue:0.583 saturation:0.673 brightness:0.600 alpha:1.000];
+            break;
+            
+        case 2:
+            return [UIColor colorWithHue:0.312 saturation:0.261 brightness:0.827 alpha:1.000];
+            break;
+            
+        default:
+            return [UIColor colorWithHue:0.567 saturation:0.294 brightness:0.133 alpha:1.000];
+            break;
+    }
 }
 
 - (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForLine:(NSUInteger)line
