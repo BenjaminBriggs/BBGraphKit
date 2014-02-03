@@ -74,6 +74,7 @@ CGFloat const axisDataPointPadding = 1.f;
     _axisLayers = [NSMutableDictionary dictionary];
     _numberOfAxisLabels = [NSMutableDictionary dictionary];
     _intervalOfAxisLabels = [NSMutableDictionary dictionary];
+    _labels = [NSMutableArray array];
     
     //Defaults
     self.axisDataPointWidth = 1.0f;
@@ -122,6 +123,9 @@ CGFloat const axisDataPointPadding = 1.f;
     self.axisView.frame = self.screenSpaceView.frame;
 	if (!self.series) { [self populateSeries]; }
     
+    if(![self validateData])
+        return;
+    
 	[self setUpValueSpace];
 	[self drawGraph];
 }
@@ -129,10 +133,34 @@ CGFloat const axisDataPointPadding = 1.f;
 - (void)reloadData
 {
 	[self populateSeries];
+    if(![self validateData])
+        return;
 	[self setUpValueSpace];
 	[self drawGraph];
 }
 
+- (BOOL)validateData
+{
+    //If all values on an axis are the same the highest and lowest values are not set correctly.  This resolves that:
+    if (_lowestXValue == _highestXValue)
+    {
+        if (_lowestXValue < 0)
+            _highestXValue = 0;
+        if (_highestXValue > 0)
+            _lowestXValue = 0;
+        
+        if (_lowestXValue < 0)
+            _highestXValue = 0;
+        if ( _highestYValue > 0)
+            _lowestYValue = 0;
+    }
+    //Check that we have enough data to draw a graph
+    if (_lowestXValue == _highestXValue || _lowestYValue == _highestYValue)
+    {
+        return NO;
+    }
+    return YES;
+}
 - (void)populateSeries
 {
 	// get the number of lines in the graph
@@ -271,6 +299,9 @@ CGFloat const axisDataPointPadding = 1.f;
     //save that into a property for re-use later
     [self setupGraphSpace];
     
+    //Remove the axis labels which we will redraw
+    [_labels makeObjectsPerformSelector:@selector(removeFromSuperview)];
+
     if (_displayXAxis)
         [self drawAxis:BBGraphAxisX];
     
@@ -652,6 +683,7 @@ CGFloat const axisDataPointPadding = 1.f;
     //^ It should be split into a dictionary of arrays, or something similar so we can see what axis the labels are on before resizing them
     label.frame = labelRect;
     label.font = axis == BBGraphAxisX ? _xAxisFont : _yAxisFont;
+    label.textColor = self.axisLabelColor;
     
     //The plan was going to be to get the font size after it adjustsFontSizeToFitWidth but the label.font doesn't seem to change
     //It may mean we have to go back to the category on UIlabel

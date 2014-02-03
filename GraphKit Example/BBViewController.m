@@ -63,6 +63,10 @@ BBLineGraphDelegate>
 {
     return 4;
 }
+//- (NSUInteger)graph:(BBGraph *)graph numberOfLabelsForAxis:(BBGraphAxis)axis
+//{
+//    return 7;
+//}
 #pragma mark - BBLineGraphDelegate
 
 - (UIColor *)graph:(BBGraph *)graph colorForSeries:(NSInteger)series
