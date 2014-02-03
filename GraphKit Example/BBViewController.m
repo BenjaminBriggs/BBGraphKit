@@ -27,8 +27,8 @@ BBLineGraphDelegate>
     self.lineGraph.displayXAxis = YES;
     self.lineGraph.displayYAxis = YES;
     
-    self.lineGraph.scaleYAxisToValues = NO;
-    self.lineGraph.scaleXAxisToValues = NO;
+    self.lineGraph.scaleYAxisToValues = YES;
+    self.lineGraph.scaleXAxisToValues = YES;
     
     self.lineGraph.axisColor = [UIColor lightGrayColor];
     
@@ -51,7 +51,7 @@ BBLineGraphDelegate>
 
 - (CGPoint)graph:(BBGraph *)graph valueForPointAtIndex:(NSIndexPath *)indexPath
 {
-	return CGPointMake(indexPath.point*100, arc4random_uniform(200));
+	return CGPointMake(indexPath.point*100, (double)arc4random_uniform(750)-200);
 }
 
 - (NSInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph
@@ -59,14 +59,20 @@ BBLineGraphDelegate>
     return 3;
 }
 
-- (NSUInteger)graph:(BBGraph *)graph numberOfLabelsForAxis:(BBGraphAxis)axis
+- (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
 {
-    return 4;
+    if (axis == BBGraphAxisY)
+    {
+        return 100;
+    }
+    return 200;
 }
+
 //- (NSUInteger)graph:(BBGraph *)graph numberOfLabelsForAxis:(BBGraphAxis)axis
 //{
-//    return 7;
+//    return 4;
 //}
+
 #pragma mark - BBLineGraphDelegate
 
 - (UIColor *)graph:(BBGraph *)graph colorForSeries:(NSInteger)series

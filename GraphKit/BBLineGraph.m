@@ -33,6 +33,8 @@
 @property (nonatomic, assign) CGFloat lowestYValue;
 @property (nonatomic, assign) CGFloat lowestXValue;
 
+@property (nonatomic, assign) CGPoint graphSpaceInset;
+
 @end
 
 NSString *const xAxisLayerKey = @"xAxisLayer";
@@ -66,7 +68,6 @@ CGFloat const axisDataPointPadding = 1.f;
     return self;
 }
 
-
 - (void)commonInit
 {
     _lineLayers = [NSMutableDictionary dictionary];
@@ -88,6 +89,8 @@ CGFloat const axisDataPointPadding = 1.f;
     _xPadding = 10.f;
     _yPadding = 10.f;
 }
+
+#pragma mark
 
 - (UIView *)axisView
 {
@@ -114,6 +117,8 @@ CGFloat const axisDataPointPadding = 1.f;
 {
 	return self.screenSpaceView.bounds;
 }
+
+#pragma mark
 
 - (void)layoutSubviews
 {
@@ -161,6 +166,9 @@ CGFloat const axisDataPointPadding = 1.f;
     }
     return YES;
 }
+
+#pragma mark - Create Data Structure
+
 - (void)populateSeries
 {
 	// get the number of lines in the graph
@@ -215,9 +223,9 @@ CGFloat const axisDataPointPadding = 1.f;
         }
         
 		// sort the line
-		if (self.orderedAxis == BBGraphAxisX)
-        {
-			[points sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        [points sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            if (self.orderedAxis == BBGraphAxisX)
+            {
 				if ([obj1 CGPointValue].x > [obj2 CGPointValue].x) {
 					return (NSComparisonResult)NSOrderedDescending;
 				}
@@ -226,11 +234,9 @@ CGFloat const axisDataPointPadding = 1.f;
 					return (NSComparisonResult)NSOrderedAscending;
 				}
 				return (NSComparisonResult)NSOrderedSame;
-			}];
-        }
-		else
-        {
-			[points sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            }
+            else
+            {
 				if ([obj1 CGPointValue].y > [obj2 CGPointValue].y) {
 					return (NSComparisonResult)NSOrderedDescending;
 				}
@@ -239,8 +245,9 @@ CGFloat const axisDataPointPadding = 1.f;
 					return (NSComparisonResult)NSOrderedAscending;
 				}
 				return (NSComparisonResult)NSOrderedSame;
-			}];
-        }
+                
+            }
+        }];
         
 		// add the array of points to the lines array, still with me?
 		[lines addObject:points];
@@ -249,83 +256,26 @@ CGFloat const axisDataPointPadding = 1.f;
 	// save the lines array
 	self.series = lines;
     
-	// finaly save the high and low values
+	// finaly round and save the high and low values
 	_highestYValue = [self roundValue:highestYValue Up:YES];
 	_highestXValue = [self roundValue:highestXValue Up:YES];
     
 	_lowestYValue = [self roundValue:lowestYValue Up:NO];
 	_lowestXValue = [self roundValue:lowestXValue Up:NO];
     
+    [self calclateInset];
 }
 
-- (CGFloat)roundValue:(CGFloat)number Up:(BOOL)up
+- (void)populateAxisLabelStrings
 {
-    double numberOfSignificentFigures = ceil(log10(fabs(number)));
     
-    int multiple = pow(10, numberOfSignificentFigures-1);
-    
-    int u;
-    
-    if (up)
-    {
-        u = ceil(number/multiple);
-    }
-    else
-    {
-        u = floor(number/multiple);
-    }
-    
-    return u * multiple;
 }
 
-- (void)setUpValueSpace
+- (void)calclateInset
 {
-    CGFloat xSize;
-    CGFloat ySize;
-    
-    xSize = _scaleXAxisToValues ? _highestXValue - _lowestXValue : _highestXValue;
-    ySize = _scaleYAxisToValues ? _highestYValue - _lowestYValue : _highestYValue;
-
-	self.valueSpace = CGRectMake(0,
-								 0,
-								 xSize,
-								 ySize);
-}
-
-- (void)drawGraph
-{
-    //Will work out the amount of space to leave around the graph by grabbing the text for the labels
-    //In order to do this we will need to grab all of the data for label text from the delegate so we
-    //save that into a property for re-use later
-    [self setupGraphSpace];
-    
-    //Remove the axis labels which we will redraw
-    [_labels makeObjectsPerformSelector:@selector(removeFromSuperview)];
-
-    if (_displayXAxis)
-        [self drawAxis:BBGraphAxisX];
-    
-    if (_displayYAxis)
-        [self drawAxis:BBGraphAxisY];
-    
-    for (NSInteger l = 0; l < [self numberOfLines]; l++)
-    {
-		[self drawLine:l];
-    }
-    
-
-}
-
-- (void)setupGraphSpace
-{
-    //At present we add the padding regardless of whether or not scale(x/y)AxisToValues is set to yes
-    //We should only pad the graph if the values would otherwise not fit within the bounds of the graph
-    //TODO: Implement ^ OR add a property to force the axis labels to sit outside of graph space (maybe preferred
-    //as should be easier to implement)
-
     _axisLabelStrings = [NSMutableArray array];
     
-    CGSize insets = CGSizeZero;
+    CGPoint inset = CGPointZero;
     
     for(int i = 0; i < 2; i++) //Iterate over the axis type enum which we know contains to types
     {
@@ -378,10 +328,12 @@ CGFloat const axisDataPointPadding = 1.f;
             
             labelValue -= fmodf(labelValue, intervalOfLabels);
             
+            // ask the delegate for a formated string
             if([self.delegate respondsToSelector:@selector(graph:stringForLabelAtValue:onAxis:)])
             {
                 labelText = [self.delegate graph:self stringForLabelAtValue:labelValue onAxis:axis];
             }
+            // or use basic formatting
             else
             {
                 labelText = [NSString stringWithFormat:@"%g", labelValue];
@@ -419,28 +371,70 @@ CGFloat const axisDataPointPadding = 1.f;
         }
         if (axis == BBGraphAxisY)
         {
-            insets.width = maxLabelWidth + axisDataPointPadding + axisDataPointSize;
+            inset.x = maxLabelWidth + axisDataPointPadding + axisDataPointSize;
         }
         else
         {
-            insets.height = maxLabelHeight + axisDataPointPadding + axisDataPointSize;
+            inset.y = maxLabelHeight + axisDataPointPadding + axisDataPointSize;
         }
         
         [_numberOfAxisLabels setObject:@(numberOfLabels) forKey:@(axis)];
         [_intervalOfAxisLabels setObject:@(intervalOfLabels) forKey:@(axis)];
     }
     
-    
-    // round up the highest values
-    
-    CGRect screenSpaceFrame = self.screenSpaceView.frame;
-    screenSpaceFrame.origin.x += insets.width;
-    screenSpaceFrame.size.width -= insets.width;
-    screenSpaceFrame.size.height -= insets.height;
-    self.screenSpaceView.frame = screenSpaceFrame;
-    self.axisView.frame = screenSpaceFrame;
-    
+    self.graphSpaceInset = inset;
+}
 
+#pragma mark - Set Up Spaces
+
+- (void)setUpValueSpace
+{
+    CGFloat xSize;
+    CGFloat ySize;
+    
+    xSize = _scaleXAxisToValues ? _highestXValue - _lowestXValue : _highestXValue;
+    ySize = _scaleYAxisToValues ? _highestYValue - _lowestYValue : _highestYValue;
+    
+	self.valueSpace = CGRectMake(0,
+								 0,
+								 xSize,
+								 ySize);
+}
+
+- (void)setupGraphSpace
+{
+    CGRect screenSpaceFrame = self.screenSpaceView.frame;
+    screenSpaceFrame.origin.x += self.graphSpaceInset.x;
+    screenSpaceFrame.size.width -= self.graphSpaceInset.x;
+    screenSpaceFrame.size.height -= self.graphSpaceInset.y;
+    self.screenSpaceView.frame = screenSpaceFrame;
+    self.axisView.frame = self.screenSpaceView.frame;
+}
+
+#pragma mark - Drawing
+
+- (void)drawGraph
+{
+    //Will work out the amount of space to leave around the graph by grabbing the text for the labels
+    //In order to do this we will need to grab all of the data for label text from the delegate so we
+    //save that into a property for re-use later
+    [self setupGraphSpace];
+    
+    //Remove the axis labels which we will redraw
+    [_labels makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    if (_displayXAxis)
+        [self drawAxis:BBGraphAxisX];
+    
+    if (_displayYAxis)
+        [self drawAxis:BBGraphAxisY];
+    
+    for (NSInteger l = 0; l < [self numberOfLines]; l++)
+    {
+		[self drawLine:l];
+    }
+    
+    
 }
 
 -(void)drawAxis:(BBGraphAxis)axis
@@ -494,8 +488,17 @@ CGFloat const axisDataPointPadding = 1.f;
 	// if there isn't a line
 	if (!lineLayer)
     {
-		// For now we are passing in -1 for an axis.  There's probably a better way
-		lineLayer = [self styledLayerForLine:-1];
+		// No lineLayer found so we need to create one
+		lineLayer = [CAShapeLayer layer];
+        lineLayer.frame = self.screenSpaceView.bounds;
+
+        // set line properties
+        lineLayer.lineJoin = kCALineJoinBevel;
+        lineLayer.lineWidth = self.axisWidth;
+        
+        // set line style
+        lineLayer.strokeColor = self.axisColor.CGColor;
+        lineLayer.fillColor = [UIColor clearColor].CGColor;
         
 		// add the layer to the view hierarchy.  We add to self and not the screenView to prevent clipping
 		[self.axisView.layer addSublayer:lineLayer];
@@ -604,7 +607,12 @@ CGFloat const axisDataPointPadding = 1.f;
 	if (!lineLayer)
     {
 		// For now we are passing in -2 for an axis data point.  There's probably a better way
-		lineLayer = [self styledLayerForLine:-2];
+		lineLayer = [CAShapeLayer layer];
+        lineLayer.frame = self.screenSpaceView.bounds;
+        lineLayer.lineJoin = kCALineJoinBevel;
+        lineLayer.lineWidth = self.axisDataPointWidth;
+        lineLayer.strokeColor = self.axisColor.CGColor;
+        lineLayer.fillColor = [UIColor clearColor].CGColor;
         
 		// add the layer to the view hierarchy.  We add to self and not the screenView to prevent clipping
 		[self.axisView.layer addSublayer:lineLayer];
@@ -758,27 +766,14 @@ CGFloat const axisDataPointPadding = 1.f;
 	CAShapeLayer *layer = [CAShapeLayer layer];
 	layer.frame = self.screenSpaceView.bounds;
     
-    if(line == -2)
+    layer.lineJoin = kCALineJoinRound;
+    if([self.delegate respondsToSelector:@selector(lineGraph:widthForLine:)])
     {
-        layer.lineJoin = kCALineJoinBevel;
-        layer.lineWidth = self.axisDataPointWidth;
-    }
-    else if(line == -1)
-    {
-        layer.lineJoin = kCALineJoinBevel;
-        layer.lineWidth = self.axisWidth;
+        layer.lineWidth = [self.delegate lineGraph:self widthForLine:line];
     }
     else
     {
-        layer.lineJoin = kCALineJoinRound;
-        if([self.delegate respondsToSelector:@selector(lineGraph:widthForLine:)])
-        {
-            layer.lineWidth = [self.delegate lineGraph:self widthForLine:line];
-        }
-        else
-        {
-            layer.lineWidth = 2.f;
-        }
+        layer.lineWidth = 2.f;
     }
     
 	layer.strokeColor = [self colorForLine:line];
@@ -829,6 +824,7 @@ CGFloat const axisDataPointPadding = 1.f;
     
     return [UIColor blackColor].CGColor;
 }
+
 - (NSInteger)numberOfLines
 {
 	return self.series.count;
@@ -845,6 +841,28 @@ CGFloat const axisDataPointPadding = 1.f;
     {
 		return 0;
     }
+}
+
+- (CGFloat)roundValue:(CGFloat)number Up:(BOOL)up
+{
+    // this dosn't work well for decimals between 0 and 1;
+    
+    double numberOfSignificentFigures = ceil(log10(fabs(number)));
+    
+    int multiple = pow(10, numberOfSignificentFigures-1);
+    
+    int u;
+    
+    if (up)
+    {
+        u = ceil(number/multiple);
+    }
+    else
+    {
+        u = floor(number/multiple);
+    }
+    
+    return u * multiple;
 }
 
 - (CGPoint)convertPointToScreenSpace:(CGPoint)point
