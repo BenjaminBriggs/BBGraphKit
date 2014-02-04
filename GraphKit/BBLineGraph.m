@@ -273,10 +273,21 @@ CGFloat const axisDataPointPadding = 1.f;
         _highestYValue = [self roundValue:highestYValue Up:YES];
         _highestXValue = [self roundValue:highestXValue Up:YES];
     }
+    else
+    {
+        _highestXValue = highestXValue;
+        _highestYValue = highestYValue;
+    }
+    
     if(_roundXAxis)
     {
         _lowestYValue = [self roundValue:lowestYValue Up:NO];
         _lowestXValue = [self roundValue:lowestXValue Up:NO];
+    }
+    else
+    {
+        _lowestXValue = lowestXValue;
+        _lowestYValue = lowestYValue;
     }
     
     [self calclateInset];
