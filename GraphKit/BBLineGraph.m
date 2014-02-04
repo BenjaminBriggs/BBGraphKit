@@ -84,8 +84,16 @@ CGFloat const axisDataPointPadding = 1.f;
     _scaleXAxisToValues = YES;
     _displayXAxis = YES;
     _displayYAxis = YES;
-    _xAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
-    _yAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
+    if([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+    {
+        _xAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
+        _yAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
+    }
+    else
+    {
+        _xAxisFont = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+        _yAxisFont = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+    }
     _xPadding = 10.f;
     _yPadding = 10.f;
 }
@@ -106,7 +114,7 @@ CGFloat const axisDataPointPadding = 1.f;
 	if (!_screenSpaceView)
     {
 		_screenSpaceView = [[UIView alloc] initWithFrame:self.bounds];
-        _screenSpaceView.clipsToBounds = YES;
+        _screenSpaceView.clipsToBounds = NO;
 		[self addSubview:_screenSpaceView];
 	}
     _screenSpaceView.backgroundColor = self.graphBackgroundColor;
@@ -707,6 +715,16 @@ CGFloat const axisDataPointPadding = 1.f;
 	// set up a bezier path
 	UIBezierPath *linePath = [UIBezierPath bezierPath];
     
+    UIBezierPath *controlPoints = [UIBezierPath bezierPath];
+    
+    BOOL curvedLine = NO;
+    
+    if ([self.delegate respondsToSelector:@selector(lineGraph:curveLine:)])
+    {
+        curvedLine = [self.delegate lineGraph:self curveLine:line];
+    }
+    
+    
 	// loop through the values
 	[lineArray enumerateObjectsUsingBlock:^(NSValue	*pointValue, NSUInteger pointNumber, BOOL *stop) {
         
@@ -721,20 +739,67 @@ CGFloat const axisDataPointPadding = 1.f;
 		// convert the values to screen
 		CGPoint screenPoint = [self convertPointToScreenSpace:point];
         
-		NSLog(@"Value (%f,%f), Screen (%f,%f)", point.x, point.y, screenPoint.x, screenPoint.y);
+//		NSLog(@"Value (%f,%f), Screen (%f,%f)", point.x, point.y, screenPoint.x, screenPoint.y);
         
 		// for the first point move to point
 		if (pointNumber == 0)
         {
 			[linePath moveToPoint:screenPoint];
+            [controlPoints moveToPoint:screenPoint];
         }
         
 		// for the rest add line to point
 		else
         {
-			[linePath addLineToPoint:screenPoint];
+            if(curvedLine && pointNumber + 1 < [lineArray count])
+            {
+                CGPoint lastPoint = [lineArray[pointNumber - 1] CGPointValue];
+                CGPoint nextPoint = [lineArray[pointNumber + 1] CGPointValue];
+                
+                //Convert point to screen space
+                if (_scaleXAxisToValues)
+                {
+                    lastPoint.x -= _lowestXValue;
+                    nextPoint.x -= _lowestXValue;
+                }
+                
+                if (_scaleYAxisToValues)
+                {
+                    lastPoint.y -= _lowestYValue;
+                    nextPoint.y -= _lowestYValue;
+                }
+                
+                // convert the values to screen
+                lastPoint = [self convertPointToScreenSpace:lastPoint];
+                nextPoint = [self convertPointToScreenSpace:nextPoint];
+                
+                //Find the point between the current and next point
+                CGPoint p1 = CGPointMake( screenPoint.x - ((screenPoint.x - lastPoint.x) / 2), screenPoint.y - ((screenPoint.y - lastPoint.y) / 2));
+                CGPoint p2 = CGPointMake( screenPoint.x + ((nextPoint.x - screenPoint.x) / 2), screenPoint.y + ((nextPoint.y - screenPoint.y) / 2));
+                CAShapeLayer *pointLayer = [CAShapeLayer layer];
+                pointLayer.lineWidth = 2.f;
+                pointLayer.strokeColor = [UIColor blackColor].CGColor;
+                pointLayer.fillColor = [UIColor blackColor].CGColor;
+                pointLayer.path = CGPathCreateWithEllipseInRect(CGRectMake(screenPoint.x, screenPoint.y, 2, 2), NULL);
+                pointLayer.frame = self.bounds;
+                NSLog(@"%@", NSStringFromCGPoint(p1));
+                [self.screenSpaceView.layer addSublayer:pointLayer];
+//                [linePath addLineToPoint:screenPoint];
+                
+                [linePath moveToPoint:p1];
+                
+                CGPoint controlPoint = CGPointMake(screenPoint.x + (screenPoint.x - (p1.x + p2.x) / 2), screenPoint.y + (screenPoint.y - (p1.y + p2.y) / 2));
+                [controlPoints addLineToPoint:controlPoint];
+                [linePath addQuadCurveToPoint:p2 controlPoint:controlPoint];
+                
+
+            }
+            else
+            {
+                [linePath addLineToPoint:screenPoint];
+            }
         }
-	}];
+    }];
     
 	// get the layer for the line;
 	CAShapeLayer *lineLayer = [self.lineLayers objectForKey:@(line)];
@@ -759,6 +824,10 @@ CGFloat const axisDataPointPadding = 1.f;
     }
 	lineLayer.frame = self.bounds;
 	lineLayer.path = linePath.CGPath;
+    CAShapeLayer *newLayer = [self styledLayerForLine:2];
+    newLayer.frame = self.bounds;
+    newLayer.path = controlPoints.CGPath;
+    [self.screenSpaceView.layer addSublayer:newLayer];
 }
 
 - (CAShapeLayer *)styledLayerForLine:(NSInteger)line

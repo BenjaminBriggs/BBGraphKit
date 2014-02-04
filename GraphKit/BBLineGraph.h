@@ -17,6 +17,9 @@
 
 //The number of length of time (seconds) it takes to draw each line.  If you implement this method you must call -animateGraph;
 - (NSTimeInterval)lineGraph:(BBLineGraph *)lineGraph animationDurationForLine:(NSUInteger)line;
+
+//Whether or not the line is curved
+- (BOOL)lineGraph:(BBLineGraph *)lineGraph curveLine:(NSUInteger)line;
 @end
 
 @interface BBLineGraph : BBGraph
