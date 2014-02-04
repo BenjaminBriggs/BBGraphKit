@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		022854C018A1296000DAE41A /* UIBezierPath+Smoothing.m in Sources */ = {isa = PBXBuildFile; fileRef = 022854BF18A1296000DAE41A /* UIBezierPath+Smoothing.m */; };
 		43A9732E1897C9EA00A9DEF9 /* BBGraphKit.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 43A9732D1897C9EA00A9DEF9 /* BBGraphKit.podspec */; };
 		43A973341897D31C00A9DEF9 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B5163F771896E48B00EE01F3 /* Main_iPhone.storyboard */; };
 		B5163F661896E48B00EE01F3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F651896E48B00EE01F3 /* Foundation.framework */; };
@@ -22,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		022854BE18A1296000DAE41A /* UIBezierPath+Smoothing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIBezierPath+Smoothing.h"; path = "GraphKit/UIBezierPath+Smoothing.h"; sourceTree = "<group>"; };
+		022854BF18A1296000DAE41A /* UIBezierPath+Smoothing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIBezierPath+Smoothing.m"; path = "GraphKit/UIBezierPath+Smoothing.m"; sourceTree = "<group>"; };
 		43A9732D1897C9EA00A9DEF9 /* BBGraphKit.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BBGraphKit.podspec; sourceTree = "<group>"; };
 		43A973311897CEE000A9DEF9 /* BBGraphKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBGraphKit.h; path = GraphKit/BBGraphKit.h; sourceTree = "<group>"; };
 		B5163F621896E48B00EE01F3 /* GraphKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GraphKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +79,8 @@
 		B5163F591896E48B00EE01F3 = {
 			isa = PBXGroup;
 			children = (
+				022854BE18A1296000DAE41A /* UIBezierPath+Smoothing.h */,
+				022854BF18A1296000DAE41A /* UIBezierPath+Smoothing.m */,
 				43A9732D1897C9EA00A9DEF9 /* BBGraphKit.podspec */,
 				43A973301897CEBA00A9DEF9 /* GraphKit */,
 				B5163F6B1896E48B00EE01F3 /* Example */,
@@ -196,6 +201,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				022854C018A1296000DAE41A /* UIBezierPath+Smoothing.m in Sources */,
 				DC5588041899194800BD4566 /* BBGraph.m in Sources */,
 				B5163F7F1896E48B00EE01F3 /* BBViewController.m in Sources */,
 				B5163F761896E48B00EE01F3 /* BBAppDelegate.m in Sources */,

@@ -42,11 +42,11 @@ BBLineGraphDelegate>
 {
 //    [self.lineGraph animateGraph];
 }
-#pragma mark - BBLineGraphDataSource
+#pragma mark - BBGraphDataSource
 
 - (NSInteger)graph:(BBGraph *)graph numberOfPointsInSeries:(NSInteger)line
 {
-	return 10;
+	return 21;
 }
 
 - (CGPoint)graph:(BBGraph *)graph valueForPointAtIndex:(NSIndexPath *)indexPath
@@ -56,7 +56,7 @@ BBLineGraphDelegate>
 
 - (NSInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph
 {
-    return 3;
+    return 5;
 }
 
 - (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
@@ -73,7 +73,7 @@ BBLineGraphDelegate>
 //    return 4;
 //}
 
-#pragma mark - BBLineGraphDelegate
+#pragma mark - BBGraphDelegate
 
 - (UIColor *)graph:(BBGraph *)graph colorForSeries:(NSInteger)series
 {
@@ -91,22 +91,31 @@ BBLineGraphDelegate>
             break;
             
         default:
-            return [UIColor colorWithHue:0.567 saturation:0.294 brightness:0.133 alpha:1.000];
+            return [UIColor colorWithHue:arc4random_uniform(100)/100.0 saturation:1 brightness:1 alpha:1];
             break;
     }
 }
+
+
+- (NSString *)graph:(BBGraph *)graph stringForLabelAtValue:(CGFloat)value onAxis:(BBGraphAxis)axis
+{
+    return [NSString stringWithFormat:@"%.1f", value];
+}
+
+#pragma mark - BBLineGraphDelegate
 
 - (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForLine:(NSUInteger)line
 {
     return 1.0;
 }
 
-- (NSString *)graph:(BBGraph *)graph stringForLabelAtValue:(CGFloat)value onAxis:(BBGraphAxis)axis
-{
-    return [NSString stringWithFormat:@"%.1f", value];
-}
 - (NSTimeInterval)lineGraph:(BBLineGraph *)lineGraph animationDurationForLine:(NSUInteger)line
 {
     return 2;
+}
+
+- (BOOL)lineGraph:(BBLineGraph *)lineGraph curveLine:(NSUInteger)line
+{
+    return YES;
 }
 @end

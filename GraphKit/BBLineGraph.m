@@ -9,6 +9,7 @@
 #import "BBLineGraph.h"
 #import "BBGraph+SubclassingHooks.h"
 #import <tgmath.h>
+#import "UIBezierPath+Smoothing.h"
 
 @interface BBLineGraph ()
 
@@ -751,55 +752,13 @@ CGFloat const axisDataPointPadding = 1.f;
 		// for the rest add line to point
 		else
         {
-            if(curvedLine && pointNumber + 1 < [lineArray count])
-            {
-                CGPoint lastPoint = [lineArray[pointNumber - 1] CGPointValue];
-                CGPoint nextPoint = [lineArray[pointNumber + 1] CGPointValue];
-                
-                //Convert point to screen space
-                if (_scaleXAxisToValues)
-                {
-                    lastPoint.x -= _lowestXValue;
-                    nextPoint.x -= _lowestXValue;
-                }
-                
-                if (_scaleYAxisToValues)
-                {
-                    lastPoint.y -= _lowestYValue;
-                    nextPoint.y -= _lowestYValue;
-                }
-                
-                // convert the values to screen
-                lastPoint = [self convertPointToScreenSpace:lastPoint];
-                nextPoint = [self convertPointToScreenSpace:nextPoint];
-                
-                //Find the point between the current and next point
-                CGPoint p1 = CGPointMake( screenPoint.x - ((screenPoint.x - lastPoint.x) / 2), screenPoint.y - ((screenPoint.y - lastPoint.y) / 2));
-                CGPoint p2 = CGPointMake( screenPoint.x + ((nextPoint.x - screenPoint.x) / 2), screenPoint.y + ((nextPoint.y - screenPoint.y) / 2));
-                CAShapeLayer *pointLayer = [CAShapeLayer layer];
-                pointLayer.lineWidth = 2.f;
-                pointLayer.strokeColor = [UIColor blackColor].CGColor;
-                pointLayer.fillColor = [UIColor blackColor].CGColor;
-                pointLayer.path = CGPathCreateWithEllipseInRect(CGRectMake(screenPoint.x, screenPoint.y, 2, 2), NULL);
-                pointLayer.frame = self.bounds;
-                NSLog(@"%@", NSStringFromCGPoint(p1));
-                [self.screenSpaceView.layer addSublayer:pointLayer];
-//                [linePath addLineToPoint:screenPoint];
-                
-                [linePath moveToPoint:p1];
-                
-                CGPoint controlPoint = CGPointMake(screenPoint.x + (screenPoint.x - (p1.x + p2.x) / 2), screenPoint.y + (screenPoint.y - (p1.y + p2.y) / 2));
-                [controlPoints addLineToPoint:controlPoint];
-                [linePath addQuadCurveToPoint:p2 controlPoint:controlPoint];
-                
-
-            }
-            else
-            {
                 [linePath addLineToPoint:screenPoint];
-            }
+
         }
     }];
+    if(curvedLine)
+        linePath = [linePath smoothedPathWithGranularity:self.bounds.size.width/[lineArray count]];
+
     
 	// get the layer for the line;
 	CAShapeLayer *lineLayer = [self.lineLayers objectForKey:@(line)];
@@ -807,7 +766,7 @@ CGFloat const axisDataPointPadding = 1.f;
 	// if there isn't a line
 	if (!lineLayer)
     {
-		// create a layer for the line;
+		// create a layer for the line
 		lineLayer = [self styledLayerForLine:line];
         
 		// add the layer to the view hierarchy
