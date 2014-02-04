@@ -85,6 +85,8 @@ CGFloat const axisDataPointPadding = 1.f;
     _scaleXAxisToValues = YES;
     _displayXAxis = YES;
     _displayYAxis = YES;
+    _roundXAxis = YES;
+    _roundYAxis = YES;
     if([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
     {
         _xAxisFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption2];
@@ -266,11 +268,16 @@ CGFloat const axisDataPointPadding = 1.f;
 	self.series = lines;
     
 	// finaly round and save the high and low values
-	_highestYValue = [self roundValue:highestYValue Up:YES];
-	_highestXValue = [self roundValue:highestXValue Up:YES];
-    
-	_lowestYValue = [self roundValue:lowestYValue Up:NO];
-	_lowestXValue = [self roundValue:lowestXValue Up:NO];
+    if(_roundYAxis)
+    {
+        _highestYValue = [self roundValue:highestYValue Up:YES];
+        _highestXValue = [self roundValue:highestXValue Up:YES];
+    }
+    if(_roundXAxis)
+    {
+        _lowestYValue = [self roundValue:lowestYValue Up:NO];
+        _lowestXValue = [self roundValue:lowestXValue Up:NO];
+    }
     
     [self calclateInset];
 }
