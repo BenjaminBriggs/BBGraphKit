@@ -46,7 +46,6 @@
 		B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBLineGraph.m; path = GraphKit/BBLineGraph.m; sourceTree = "<group>"; };
 		DC5588021899194800BD4566 /* BBGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBGraph.h; path = GraphKit/BBGraph.h; sourceTree = "<group>"; };
 		DC5588031899194800BD4566 /* BBGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBGraph.m; path = GraphKit/BBGraph.m; sourceTree = "<group>"; };
-		DC55880618991B4700BD4566 /* BBGraph+SubclassingHooks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BBGraph+SubclassingHooks.h"; path = "GraphKit/BBGraph+SubclassingHooks.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +67,6 @@
 			children = (
 				43A973311897CEE000A9DEF9 /* BBGraphKit.h */,
 				DC5588021899194800BD4566 /* BBGraph.h */,
-				DC55880618991B4700BD4566 /* BBGraph+SubclassingHooks.h */,
 				DC5588031899194800BD4566 /* BBGraph.m */,
 				B5163F9D1896E4DC00EE01F3 /* BBLineGraph.h */,
 				B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */,

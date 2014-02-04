@@ -7,9 +7,15 @@
 //
 
 #import "BBLineGraph.h"
-#import "BBGraph+SubclassingHooks.h"
 #import <tgmath.h>
 #import "UIBezierPath+Smoothing.h"
+
+@interface BBGraph ()
+
+@property (nonatomic, strong) NSArray *series; // an array of arrays of nsvalues for cgpoints
+
+@end
+
 
 @interface BBLineGraph ()
 
