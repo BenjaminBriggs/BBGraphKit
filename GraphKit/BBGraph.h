@@ -10,10 +10,11 @@
 
 @class BBGraph;
 
-typedef NS_ENUM(NSInteger, BBGraphStyle) {
-    BBGraphStylePlain = 0,	// regular line graph
-    BBGraphStyleStacked		// Not yet implemented
-};
+extern NSString *const xAxisLayerKey;
+extern NSString *const yAxisLayerKey;
+
+extern CGFloat const axisDataPointSize;
+extern CGFloat const axisDataPointPadding;
 
 typedef NS_ENUM(NSInteger, BBGraphAxis) {
     BBGraphAxisX = 0,
@@ -22,7 +23,7 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 
 @protocol BBGraphDataSource <NSObject>
 
-- (NSInteger)graph:(BBGraph *)lineGraph numberOfPointsInSeries:(NSInteger)line;
+- (NSInteger)graph:(BBGraph *)lineGraph numberOfPointsInSeries:(NSInteger)series;
 
 - (CGPoint)graph:(BBGraph *)lineGraph valueForPointAtIndex:(NSIndexPath *)indexPath; // Use + (NSIndexPath *)indexPathForPoint:(NSInteger)point inLine:(NSInteger)line;
 
@@ -63,8 +64,40 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 @property (nonatomic, strong) UIFont *xAxisFont;
 @property (nonatomic, strong) UIFont *yAxisFont;
 
+//Set the lowest value on the axis based on the lowest data point (Default is YES)
+@property (nonatomic, assign) BOOL scaleXAxisToValues;
+@property (nonatomic, assign) BOOL scaleYAxisToValues;
+
 //Padding between the outer bounds of the view and the outer edge of the axis (default = 10)
 @property (nonatomic, assign) CGFloat xPadding;
 @property (nonatomic, assign) CGFloat yPadding;
+
+//Show lines at x=0 and y=0 (Default is YES)
+@property (nonatomic, assign) BOOL displayXAxis;
+@property (nonatomic, assign) BOOL displayYAxis;
+//Round up & down the highest and lowest points on an axis to a pretty number (Default is YES)
+@property (nonatomic, assign) BOOL roundXAxis;
+@property (nonatomic, assign) BOOL roundYAxis;
+//It may be useful to not display a zero label on the axis (eg. a graph with bisecting axes)
+@property (nonatomic, assign) BOOL displayZeroAxisLabel;
+
+- (void)reloadData;
+
+//- (void)animateGraph;
+
+- (NSInteger)numberOfSeries;
+- (NSInteger)numberOfPointsInLine:(NSInteger)line;
+
+- (CGPoint)convertPointToScreenSpace:(CGPoint)point;
+- (CGPoint)convertPointToValueSpace:(CGPoint)point;
+
+@end
+
+@interface NSIndexPath (BBLineGraph)
+
++ (NSIndexPath *)indexPathForPoint:(NSInteger)point inLine:(NSInteger)line;
+
+@property(nonatomic,readonly) NSInteger line;
+@property(nonatomic,readonly) NSInteger point;
 
 @end

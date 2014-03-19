@@ -1,14 +1,12 @@
 //
-//  BBLineGraph.m
+//  BBBarGraph.m
 //  GraphKit
 //
-//  Created by Benjamin Briggs on 27/01/2014.
+//  Created by Palringo on 19/03/2014.
 //  Copyright (c) 2014 Benjamin Briggs. All rights reserved.
 //
 
-#import "BBLineGraph.h"
-#import <tgmath.h>
-#import "UIBezierPath+Smoothing.h"
+#import "BBBarGraph.h"
 
 @interface BBGraph ()
 
@@ -44,11 +42,11 @@
 
 @end
 
-@interface BBLineGraph ()
+@interface BBBarGraph ()
 
 @end
 
-@implementation BBLineGraph
+@implementation BBBarGraph
 
 #pragma mark
 
@@ -121,8 +119,6 @@
     {
 		[self drawLine:l];
     }
-    
-    
 }
 
 -(void)drawAxis:(BBGraphAxis)axis
@@ -179,7 +175,7 @@
 		// No lineLayer found so we need to create one
 		lineLayer = [CAShapeLayer layer];
         lineLayer.frame = self.screenSpaceView.bounds;
-
+        
         // set line properties
         lineLayer.lineJoin = kCALineJoinBevel;
         lineLayer.lineWidth = self.axisWidth;
@@ -211,7 +207,7 @@
         return;
     
     UIBezierPath *linePath = [UIBezierPath bezierPath];
-
+    
     //Iterate through the number of required labels and draw the markers
     for(int i = 0; i <= numberOfLabels; i++)
     {
@@ -318,9 +314,9 @@
     //Don't draw for 0
     if (!self.displayZeroAxisLabel && value == 0)
         return;
-
+    
     NSString *labelText = self.axisLabelStrings[axis][@(value)];
-
+    
     //TODO: get label text from our property
     
     CGRect labelRect;
@@ -365,7 +361,7 @@
     }
     else if (axis == BBGraphAxisY) //The labels on the Y axis will be 10% the width of the graph and as tall as possible
     {
-
+        
         CGFloat width = self.axisView.frame.origin.x;
         labelRect = CGRectMake(screenSpaceLabelPoint.x - width - axisDataPointPadding - axisDataPointSize,
                                screenSpaceLabelPoint.y - height / 2,
@@ -397,14 +393,6 @@
     
     UIBezierPath *controlPoints = [UIBezierPath bezierPath];
     
-    BOOL curvedLine = NO;
-    
-    if ([self.delegate respondsToSelector:@selector(lineGraph:shouldCurveSeries:)])
-    {
-        curvedLine = [self.delegate lineGraph:self shouldCurveSeries:line];
-    }
-    
-    
 	// loop through the values
 	[lineArray enumerateObjectsUsingBlock:^(NSValue	*pointValue, NSUInteger pointNumber, BOOL *stop) {
         
@@ -418,27 +406,14 @@
         
 		// convert the values to screen
 		CGPoint screenPoint = [self convertPointToScreenSpace:point];
+        CGPoint flooredPoint = point;
+        flooredPoint.y = 0;
+		CGPoint screenFlooredPoint = [self convertPointToScreenSpace:flooredPoint];
         
-//		NSLog(@"Value (%f,%f), Screen (%f,%f)", point.x, point.y, screenPoint.x, screenPoint.y);
-        
-		// for the first point move to point
-		if (pointNumber == 0)
-        {
-			[linePath moveToPoint:screenPoint];
-            [controlPoints moveToPoint:screenPoint];
-        }
-        
-		// for the rest add line to point
-		else
-        {
-                [linePath addLineToPoint:screenPoint];
-
-        }
+        [linePath moveToPoint:screenFlooredPoint];
+        [linePath addLineToPoint:screenPoint];
     }];
-    if(curvedLine)
-        linePath = [linePath smoothedPathWithGranularity:self.bounds.size.width/[lineArray count]];
 
-    
 	// get the layer for the line;
 	CAShapeLayer *lineLayer = [self.lineLayers objectForKey:@(line)];
     
@@ -456,7 +431,7 @@
     }
     
     //If animation is enabled don't draw the line yet
-    if([self.delegate respondsToSelector:@selector(lineGraph:animationDurationForSeries:)])
+    if([self.delegate respondsToSelector:@selector(barGraph:animationDurationForSeries:)])
     {
         [self animateGraph];
     }
@@ -474,13 +449,14 @@
 	layer.frame = self.screenSpaceView.bounds;
     
     layer.lineJoin = kCALineJoinRound;
-    if([self.delegate respondsToSelector:@selector(lineGraph:widthForSeries:)])
+    if([self.delegate respondsToSelector:@selector(barGraph:widthForSeries:)])
     {
-        layer.lineWidth = [self.delegate lineGraph:self widthForSeries:line];
+        layer.lineWidth = [self.delegate barGraph:self
+                                   widthForSeries:line];
     }
     else
     {
-        layer.lineWidth = 2.f;
+        layer.lineWidth = 20.f;
     }
     
 	layer.strokeColor = [self colorForLine:line];
@@ -493,13 +469,14 @@
 
 - (void)animateGraph
 {
-    if(![self.delegate respondsToSelector:@selector(lineGraph:animationDurationForSeries:)])
+    if(![self.delegate respondsToSelector:@selector(barGraph:animationDurationForSeries:)])
         return;
     for(id lineKey in [self.lineLayers allKeys])
     {
         CAShapeLayer *lineLayer = self.lineLayers[lineKey];
         
-        NSTimeInterval animationDuration = [self.delegate lineGraph:self animationDurationForSeries:[lineKey integerValue]];
+        NSTimeInterval animationDuration = [self.delegate barGraph:self
+                                        animationDurationForSeries:[lineKey integerValue]];
         CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
         animation.fromValue = @(0);
         animation.toValue = @(1);
@@ -509,7 +486,7 @@
         
         [lineLayer addAnimation:animation forKey:@"strokeEnd"];
     }
-
+    
 }
 #pragma mark - Helpers
 

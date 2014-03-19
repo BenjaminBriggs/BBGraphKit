@@ -8,6 +8,7 @@
 
 #import "BBViewController.h"
 #import "BBLineGraph.h"
+#import "BBBarGraph.h"
 
 @interface BBViewController ()
 <BBGraphDataSource,
@@ -46,17 +47,21 @@ BBLineGraphDelegate>
 
 - (NSInteger)graph:(BBGraph *)graph numberOfPointsInSeries:(NSInteger)line
 {
-	return 21;
+	return 10;
 }
 
 - (CGPoint)graph:(BBGraph *)graph valueForPointAtIndex:(NSIndexPath *)indexPath
 {
-	return CGPointMake(indexPath.point*100, (double)arc4random_uniform(750)-200);
+	return CGPointMake(indexPath.point*100, (double)arc4random_uniform(750)+100);
 }
 
 - (NSInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph
 {
-    return 5;
+    if ([lineGraph isMemberOfClass:[BBBarGraph class]])
+        return 1;
+    
+    else
+        return 3;
 }
 
 - (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
@@ -68,10 +73,10 @@ BBLineGraphDelegate>
     return 200;
 }
 
-//- (NSUInteger)graph:(BBGraph *)graph numberOfLabelsForAxis:(BBGraphAxis)axis
-//{
-//    return 4;
-//}
+- (BOOL)lineGraph:(BBLineGraph *)lineGraph shouldCurveSeries:(NSUInteger)series
+{
+    return YES;
+}
 
 #pragma mark - BBGraphDelegate
 
