@@ -43,6 +43,7 @@ BBLineGraphDelegate>
 {
 //    [self.lineGraph animateGraph];
 }
+
 #pragma mark - BBGraphDataSource
 
 - (NSInteger)graph:(BBGraph *)graph numberOfPointsInSeries:(NSInteger)line
@@ -52,7 +53,7 @@ BBLineGraphDelegate>
 
 - (CGPoint)graph:(BBGraph *)graph valueForPointAtIndex:(NSIndexPath *)indexPath
 {
-	return CGPointMake(indexPath.point*100, (double)arc4random_uniform(750)+100);
+    return CGPointMake(indexPath.point * 100, (CGFloat) (double) arc4random_uniform(750));
 }
 
 - (NSInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph
@@ -68,14 +69,9 @@ BBLineGraphDelegate>
 {
     if (axis == BBGraphAxisY)
     {
-        return 100;
+        return 200;
     }
-    return 200;
-}
-
-- (BOOL)lineGraph:(BBLineGraph *)lineGraph shouldCurveSeries:(NSUInteger)series
-{
-    return YES;
+    return 100;
 }
 
 #pragma mark - BBGraphDelegate
@@ -85,19 +81,15 @@ BBLineGraphDelegate>
     switch (series) {
         case 0:
             return [UIColor colorWithHue:0.011 saturation:0.623 brightness:0.894 alpha:1.000];
-            break;
             
         case 1:
             return [UIColor colorWithHue:0.583 saturation:0.673 brightness:0.600 alpha:1.000];
-            break;
             
         case 2:
             return [UIColor colorWithHue:0.312 saturation:0.261 brightness:0.827 alpha:1.000];
-            break;
             
         default:
             return [UIColor colorWithHue:arc4random_uniform(100)/100.0 saturation:1 brightness:1 alpha:1];
-            break;
     }
 }
 
@@ -109,18 +101,16 @@ BBLineGraphDelegate>
 
 #pragma mark - BBLineGraphDelegate
 
-- (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForLine:(NSUInteger)line
-{
+- (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForSeries:(NSUInteger)line {
     return 1.0;
 }
 
-- (NSTimeInterval)lineGraph:(BBLineGraph *)lineGraph animationDurationForLine:(NSUInteger)line
-{
+- (NSTimeInterval)lineGraph:(BBLineGraph *)lineGraph animationDurationForSeries:(NSUInteger)line {
     return 2;
 }
 
-- (BOOL)lineGraph:(BBLineGraph *)lineGraph curveLine:(NSUInteger)line
-{
+- (BOOL)lineGraph:(BBLineGraph *)lineGraph shouldCurveSeries:(NSUInteger)series {
     return YES;
 }
+
 @end

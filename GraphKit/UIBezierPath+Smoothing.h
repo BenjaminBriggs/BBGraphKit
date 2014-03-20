@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 
 @interface UIBezierPath (Smoothing)
-- (UIBezierPath*)smoothedPathWithGranularity:(NSInteger)granularity;
+- (UIBezierPath *)smoothedPathWithGranularity:(CGFloat)granularity;
 
 #define VALUE(_INDEX_) [NSValue valueWithCGPoint:points[_INDEX_]]
 #define POINT(_INDEX_) [(NSValue *)[points objectAtIndex:_INDEX_] CGPointValue]

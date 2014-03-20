@@ -23,13 +23,13 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 
 @protocol BBGraphDataSource <NSObject>
 
-- (NSInteger)graph:(BBGraph *)lineGraph numberOfPointsInSeries:(NSInteger)series;
+- (NSUInteger)graph:(BBGraph *)lineGraph numberOfPointsInSeries:(NSInteger)series;
 
 - (CGPoint)graph:(BBGraph *)lineGraph valueForPointAtIndex:(NSIndexPath *)indexPath; // Use + (NSIndexPath *)indexPathForPoint:(NSInteger)point inLine:(NSInteger)line;
 
 @optional
 
-- (NSInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph; // Default is 1 if not implemented
+- (NSUInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph; // Default is 1 if not implemented
 
 //There are two ways we can add data points to an axis.  Either by specifying a number of points to add or the increment value
 //If both are implemented then we will use intervalOfLabelsForAxis
@@ -86,7 +86,8 @@ typedef NS_ENUM(NSInteger, BBGraphAxis) {
 //- (void)animateGraph;
 
 - (NSInteger)numberOfSeries;
-- (NSInteger)numberOfPointsInLine:(NSInteger)line;
+
+- (NSInteger)numberOfPointsInLine:(NSUInteger)line;
 
 - (CGPoint)convertPointToScreenSpace:(CGPoint)point;
 - (CGPoint)convertPointToValueSpace:(CGPoint)point;
