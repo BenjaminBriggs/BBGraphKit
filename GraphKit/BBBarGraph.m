@@ -7,6 +7,7 @@
 //
 
 #import "BBBarGraph.h"
+#import "BBLineGraph.h"
 
 @interface BBGraph ()
 
@@ -112,6 +113,8 @@
     for (NSUInteger l = 0; l < [self numberOfSeries]; l++) {
         [self drawSeries:l];
     }
+
+
 }
 
 - (void)drawAxis:(BBGraphAxis)axis {
@@ -291,10 +294,9 @@
     //TODO: get label text from our property
 
     CGRect labelRect = CGRectZero;
-    CGPoint screenSpaceLabelPoint;
     UILabel *label = [[UILabel alloc] init];
 
-    CGFloat height;
+    CGFloat height = 0;
 
     // iOS 7+
     if ([labelText respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
@@ -311,7 +313,7 @@
     }
 
     [label setTextAlignment:NSTextAlignmentRight];
-    screenSpaceLabelPoint = [self convertPointToScreenSpace:
+    CGPoint screenSpaceLabelPoint = [self convertPointToScreenSpace:
             CGPointMake(self.scaleXAxisToValues ? -self.lowestXValue : 0,
                     value - (self.scaleYAxisToValues ? self.lowestYValue : 0))];
     //The labels on the X axis will be 5% as tall as the graph area and as wide as possible
@@ -357,6 +359,13 @@
 
     // set up a bezier path
     UIBezierPath *seriesPath = [UIBezierPath bezierPath];
+
+    BOOL curvedLine = NO;
+
+    if ([self.delegate respondsToSelector:@selector(lineGraph:shouldCurveSeries:)]) {
+//        curvedLine = [self.delegate lineGraph:self shouldCurveSeries:series];
+    }
+
 
     // loop through the values
     [seriesArray enumerateObjectsUsingBlock:^(NSValue *pointValue, NSUInteger pointNumber, BOOL *stop) {

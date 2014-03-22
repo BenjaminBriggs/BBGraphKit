@@ -15,7 +15,7 @@
 @optional
 - (CGFloat)barGraph:(BBBarGraph *)barGraph widthForSeries:(NSUInteger)series;
 
-//The number of length of time (seconds) it takes to draw each line.  If you implement this method you must call -animateGraph;
+//The number of length of time (seconds) it takes to draw each series.  If you implement this method you must call -animateGraph;
 - (NSTimeInterval)barGraph:(BBBarGraph *)barGraph animationDurationForSeries:(NSUInteger)series;
 @end
 

@@ -15,10 +15,10 @@
 @optional
 - (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForSeries:(NSUInteger)series;
 
-//The number of length of time (seconds) it takes to draw each line.  If you implement this method you must call -animateGraph;
+//The number of length of time (seconds) it takes to draw each series.  If you implement this method you must call -animateGraph;
 - (NSTimeInterval)lineGraph:(BBLineGraph *)lineGraph animationDurationForSeries:(NSUInteger)series;
 
-//Whether or not the line is curved
+//Whether or not the series is curved
 - (BOOL)lineGraph:(BBLineGraph *)lineGraph shouldCurveSeries:(NSUInteger)series;
 @end
 
