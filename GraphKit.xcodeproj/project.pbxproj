@@ -18,8 +18,6 @@
 		B5163F761896E48B00EE01F3 /* BBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F751896E48B00EE01F3 /* BBAppDelegate.m */; };
 		B5163F7F1896E48B00EE01F3 /* BBViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F7E1896E48B00EE01F3 /* BBViewController.m */; };
 		B5163F811896E48B00EE01F3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5163F801896E48B00EE01F3 /* Images.xcassets */; };
-		B5163F9F1896E4DC00EE01F3 /* BBLineGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */; };
-		C002B29318D9BE56001FCC32 /* BBBarGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = C002B29218D9BE56001FCC32 /* BBBarGraph.m */; };
 		DC5588041899194800BD4566 /* BBGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5588031899194800BD4566 /* BBGraph.m */; };
 /* End PBXBuildFile section */
 
@@ -43,10 +41,6 @@
 		B5163F7E1896E48B00EE01F3 /* BBViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BBViewController.m; path = "../GraphKit Example/BBViewController.m"; sourceTree = "<group>"; };
 		B5163F801896E48B00EE01F3 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../GraphKit Example/Images.xcassets"; sourceTree = "<group>"; };
 		B5163F871896E48B00EE01F3 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		B5163F9D1896E4DC00EE01F3 /* BBLineGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBLineGraph.h; path = GraphKit/BBLineGraph.h; sourceTree = "<group>"; };
-		B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBLineGraph.m; path = GraphKit/BBLineGraph.m; sourceTree = "<group>"; };
-		C002B29118D9BE56001FCC32 /* BBBarGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBBarGraph.h; path = GraphKit/BBBarGraph.h; sourceTree = "<group>"; };
-		C002B29218D9BE56001FCC32 /* BBBarGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = BBBarGraph.m; path = GraphKit/BBBarGraph.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		DC5588021899194800BD4566 /* BBGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBGraph.h; path = GraphKit/BBGraph.h; sourceTree = "<group>"; };
 		DC5588031899194800BD4566 /* BBGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBGraph.m; path = GraphKit/BBGraph.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -71,10 +65,6 @@
 				43A973311897CEE000A9DEF9 /* BBGraphKit.h */,
 				DC5588021899194800BD4566 /* BBGraph.h */,
 				DC5588031899194800BD4566 /* BBGraph.m */,
-				B5163F9D1896E4DC00EE01F3 /* BBLineGraph.h */,
-				B5163F9E1896E4DC00EE01F3 /* BBLineGraph.m */,
-				C002B29118D9BE56001FCC32 /* BBBarGraph.h */,
-				C002B29218D9BE56001FCC32 /* BBBarGraph.m */,
 			);
 			name = GraphKit;
 			sourceTree = "<group>";
@@ -210,11 +200,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				022854C018A1296000DAE41A /* UIBezierPath+Smoothing.m in Sources */,
-				C002B29318D9BE56001FCC32 /* BBBarGraph.m in Sources */,
 				DC5588041899194800BD4566 /* BBGraph.m in Sources */,
 				B5163F7F1896E48B00EE01F3 /* BBViewController.m in Sources */,
 				B5163F761896E48B00EE01F3 /* BBAppDelegate.m in Sources */,
-				B5163F9F1896E4DC00EE01F3 /* BBLineGraph.m in Sources */,
 				B5163F721896E48B00EE01F3 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,14 +7,12 @@
 //
 
 #import "BBViewController.h"
-#import "BBLineGraph.h"
-#import "BBBarGraph.h"
+#import "BBGraph.h"
 
 @interface BBViewController ()
-<BBGraphDataSource,
-BBLineGraphDelegate>
+<BBGraphDataSource, BBGraphDelegate>
 
-@property (weak, nonatomic) IBOutlet BBLineGraph *lineGraph;
+@property (weak, nonatomic) IBOutlet BBGraph *lineGraph;
 @property (nonatomic, strong) NSArray *items;
 @end
 
@@ -46,23 +44,24 @@ BBLineGraphDelegate>
 
 #pragma mark - BBGraphDataSource
 
-- (NSInteger)graph:(BBGraph *)graph numberOfPointsInSeries:(NSInteger)line
+- (NSUInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph
+{
+	return 3;
+}
+
+- (NSUInteger)graph:(BBGraph *)graph numberOfPointsInSeries:(NSInteger)line
 {
 	return 10;
+}
+
+- (BBGraphType)graph:(BBGraph *)lineGraph typeOfGraphForSeries:(NSInteger)series
+{
+	return series % 2 ? BBGraphTypeBar : BBGraphTypeLine;
 }
 
 - (CGPoint)graph:(BBGraph *)graph valueForPointAtIndex:(NSIndexPath *)indexPath
 {
     return CGPointMake(indexPath.point * 100, (CGFloat) (double) arc4random_uniform(750));
-}
-
-- (NSInteger)numberOfSeriesInGraph:(BBGraph *)lineGraph
-{
-    if ([lineGraph isMemberOfClass:[BBBarGraph class]])
-        return 1;
-    
-    else
-        return 3;
 }
 
 - (CGFloat)graph:(BBGraph *)graph intervalOfLabelsForAxis:(BBGraphAxis)axis
@@ -96,20 +95,18 @@ BBLineGraphDelegate>
 
 - (NSString *)graph:(BBGraph *)graph stringForLabelAtValue:(CGFloat)value onAxis:(BBGraphAxis)axis
 {
-    return [NSString stringWithFormat:@"%.1f", value];
+    return [NSString stringWithFormat:@"%.0f", value];
 }
 
-#pragma mark - BBLineGraphDelegate
-
-- (CGFloat)lineGraph:(BBLineGraph *)lineGraph widthForSeries:(NSUInteger)line {
+- (CGFloat)graph:(BBGraph *)lineGraph widthForSeries:(NSUInteger)line {
     return 1.0;
 }
 
-- (NSTimeInterval)lineGraph:(BBLineGraph *)lineGraph animationDurationForSeries:(NSUInteger)line {
+- (NSTimeInterval)graph:(BBGraph *)lineGraph animationDurationForSeries:(NSUInteger)line {
     return 2;
 }
 
-- (BOOL)lineGraph:(BBLineGraph *)lineGraph shouldCurveSeries:(NSUInteger)series {
+- (BOOL)graph:(BBGraph *)lineGraph shouldCurveSeries:(NSUInteger)series {
     return YES;
 }
 

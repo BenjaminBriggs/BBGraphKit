@@ -36,14 +36,6 @@
 @property(nonatomic, strong) UIView *screenSpaceView;
 @property(nonatomic, strong) UIView *axisView;
 
-- (void)setUpValueSpace;
-
-- (void)setupGraphSpace;
-
-- (void)populateSeries;
-
-- (CGColorRef)colorForSeries:(NSInteger)series;
-
 @end
 
 CGFloat const axisDataPointSize = 5.f;
@@ -54,7 +46,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 @implementation BBGraph
 
-- (instancetype)init {
+- (instancetype)init
+{
     self = [super init];
     if (self) {
         [self commonInit];
@@ -62,7 +55,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
     self = [super initWithCoder:coder];
     if (self) {
         [self commonInit];
@@ -70,7 +64,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame
+{
     self = [super initWithFrame:frame];
     if (self) {
         [self commonInit];
@@ -78,7 +73,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     return self;
 }
 
-- (void)commonInit {
+- (void)commonInit
+{
     self.seriesLayers = [NSMutableDictionary dictionary];
     self.axisDataPointLayers = [NSMutableDictionary dictionary];
     self.axisLayers = [NSMutableDictionary dictionary];
@@ -110,29 +106,36 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     self.axisColor = [UIColor blackColor];
 }
 
+#pragma mark -
 
-- (NSInteger)numberOfSeries {
+- (NSInteger)numberOfSeries
+{
     return self.series.count;
 }
 
-- (NSInteger)numberOfPointsInSeries:(NSUInteger)series {
-    if (series <= 0 && series > self.series.count) {
+- (NSInteger)numberOfPointsInSeries:(NSUInteger)series
+{
+    if (series <= 0 && series > self.series.count)
+	{
         NSArray *points = self.series[series];
         return points.count;
     }
-    else {
+    else
+	{
         return 0;
     }
 }
 
 #pragma mark - Create Data Structure
 
-- (void)populateSeries {
+- (void)populateSeries
+{
     // get the number of lines in the graph
     NSUInteger numberOfSeries = 1;
 
     // check if the data source provided a number of lines
-    if ([self.dataSource respondsToSelector:@selector(numberOfSeriesInGraph:)]) {
+    if ([self.dataSource respondsToSelector:@selector(numberOfSeriesInGraph:)])
+	{
         numberOfSeries = [self.dataSource numberOfSeriesInGraph:self];
     }
 
@@ -147,7 +150,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     NSMutableArray *lines = [NSMutableArray arrayWithCapacity:numberOfSeries];
 
     // loop to get the lines
-    for (NSInteger l = 0; l < numberOfSeries; l++) {
+    for (NSInteger l = 0; l < numberOfSeries; l++)
+	{
 
         // check how many points are in this series
         NSUInteger numberOfPoints = [self.dataSource graph:self
@@ -157,7 +161,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         NSMutableArray *points = [NSMutableArray arrayWithCapacity:numberOfPoints];
 
         // loop to get the points for this series
-        for (NSInteger p = 0; p < numberOfPoints; p++) {
+        for (NSInteger p = 0; p < numberOfPoints; p++)
+		{
 
             // get the point from the data source
             CGPoint point = [self.dataSource graph:self
@@ -177,29 +182,36 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         }
 
         // sort the series
-        [points sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            if (self.orderedAxis == BBGraphAxisX) {
-                if ([obj1 CGPointValue].x > [obj2 CGPointValue].x) {
-                    return (NSComparisonResult) NSOrderedDescending;
-                }
+        [points sortUsingComparator:^NSComparisonResult(id obj1, id obj2)
+		 {
+			 if (self.orderedAxis == BBGraphAxisX)
+			 {
+				 if ([obj1 CGPointValue].x > [obj2 CGPointValue].x)
+				 {
+					 return (NSComparisonResult) NSOrderedDescending;
+				 }
 
-                if ([obj1 CGPointValue].x < [obj2 CGPointValue].x) {
-                    return (NSComparisonResult) NSOrderedAscending;
-                }
-                return (NSComparisonResult) NSOrderedSame;
-            }
-            else {
-                if ([obj1 CGPointValue].y > [obj2 CGPointValue].y) {
-                    return (NSComparisonResult) NSOrderedDescending;
-                }
+				 if ([obj1 CGPointValue].x < [obj2 CGPointValue].x)
+				 {
+					 return (NSComparisonResult) NSOrderedAscending;
+				 }
+				 return (NSComparisonResult) NSOrderedSame;
+			 }
+			 else
+			 {
+				 if ([obj1 CGPointValue].y > [obj2 CGPointValue].y)
+				 {
+					 return (NSComparisonResult) NSOrderedDescending;
+				 }
 
-                if ([obj1 CGPointValue].y < [obj2 CGPointValue].y) {
-                    return (NSComparisonResult) NSOrderedAscending;
-                }
-                return (NSComparisonResult) NSOrderedSame;
+				 if ([obj1 CGPointValue].y < [obj2 CGPointValue].y)
+				 {
+					 return (NSComparisonResult) NSOrderedAscending;
+				 }
+				 return (NSComparisonResult) NSOrderedSame;
 
-            }
-        }];
+			 }
+		 }];
 
         // add the array of points to the lines array, still with me?
         [lines addObject:points];
@@ -209,20 +221,24 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     self.series = lines;
 
     // finaly round and save the high and low values
-    if (self.roundYAxis) {
+    if (self.roundYAxis)
+	{
         self.highestYValue = [self roundValue:highestYValue Up:YES];
         self.highestXValue = [self roundValue:highestXValue Up:YES];
     }
-    else {
+    else
+	{
         self.highestXValue = highestXValue;
         self.highestYValue = highestYValue;
     }
 
-    if (self.roundXAxis) {
+    if (self.roundXAxis)
+	{
         self.lowestYValue = [self roundValue:lowestYValue Up:NO];
         self.lowestXValue = [self roundValue:lowestXValue Up:NO];
     }
-    else {
+    else
+	{
         self.lowestXValue = lowestXValue;
         self.lowestYValue = lowestYValue;
     }
@@ -230,17 +246,38 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     [self calclateInset];
 }
 
-- (void)populateAxisLabelStrings {
+- (BOOL)validateData
+{
+    //If all values on an axis are the same the highest and lowest values are not set correctly.  This resolves that:
+    if (self.lowestXValue == self.highestXValue)
+	{
+        if (self.lowestXValue < 0)
+            self.highestXValue = 0;
+        if (self.highestXValue > 0)
+            self.lowestXValue = 0;
+
+        if (self.lowestXValue < 0)
+            self.highestXValue = 0;
+        if (self.highestYValue > 0)
+            self.lowestYValue = 0;
+    }
+    //Check that we have enough data to draw a graph
+    return !(self.lowestXValue == self.highestXValue || self.lowestYValue == self.highestYValue);
+}
+
+- (void)populateAxisLabelStrings
+{
 
 }
 
-- (void)calclateInset {
+- (void)calclateInset
+{
     self.axisLabelStrings = [NSMutableArray array];
 
     CGPoint inset = CGPointZero;
 
     for (int i = 0; i < 2; i++) //Iterate over the axis type enum which we know contains to types
-    {
+	{
         BBGraphAxis axis = (BBGraphAxis) i;
         CGFloat maxLabelWidth = 0.f;
         CGFloat maxLabelHeight = 0.f;
@@ -287,7 +324,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
             if ([self.delegate respondsToSelector:@selector(graph:stringForLabelAtValue:onAxis:)]) {
                 labelText = [self.delegate graph:self stringForLabelAtValue:labelValue onAxis:axis];
             }
-                    // or use basic formatting
+			// or use basic formatting
             else {
                 labelText = [NSString stringWithFormat:@"%g", labelValue];
             }
@@ -310,7 +347,7 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
                                                       context:nil];
                 size = rect.size;
             }
-                    // iOS < 7
+			// iOS < 7
             else {
                 size = [labelText sizeWithFont:font
                              constrainedToSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
@@ -319,23 +356,26 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
             maxLabelWidth = MAX(size.width, maxLabelWidth);
             maxLabelHeight = MAX(size.height, maxLabelHeight);
         }
-        if (axis == BBGraphAxisY) {
+        if (axis == BBGraphAxisY)
+		{
             inset.x = maxLabelWidth + axisDataPointPadding + axisDataPointSize;
         }
-        else {
+        else
+		{
             inset.y = maxLabelHeight + axisDataPointPadding + axisDataPointSize;
         }
 
         [self.numberOfAxisLabels setObject:@(numberOfLabels) forKey:@(axis)];
         [self.intervalOfAxisLabels setObject:@(intervalOfLabels) forKey:@(axis)];
-    }
+	}
 
     self.graphSpaceInset = inset;
 }
 
 #pragma mark - Set Up Spaces
 
-- (void)setUpValueSpace {
+- (void)setUpValueSpace
+{
     CGFloat xSize;
     CGFloat ySize;
 
@@ -343,12 +383,13 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     ySize = self.scaleYAxisToValues ? self.highestYValue - self.lowestYValue : self.highestYValue;
 
     self.valueSpace = CGRectMake(0,
-            0,
-            xSize,
-            ySize);
+								 0,
+								 xSize,
+								 ySize);
 }
 
-- (void)setupGraphSpace {
+- (void)setUpGraphSpace
+{
     CGRect screenSpaceFrame = self.screenSpaceView.frame;
     screenSpaceFrame.origin.x += self.graphSpaceInset.x;
     screenSpaceFrame.size.width -= self.graphSpaceInset.x;
@@ -359,45 +400,64 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 #pragma mark - Alterations
 
-- (void)insertSeries:(NSIndexSet *)series {
+- (void)reloadData
+{
+    [self populateSeries];
+    if (![self validateData])
+        return;
+    [self setUpValueSpace];
+    [self drawGraph];
+}
+
+- (void)insertSeries:(NSIndexSet *)series
+{
 
 }
 
-- (void)deleteSeries:(NSIndexSet *)series {
+- (void)deleteSeries:(NSIndexSet *)series
+{
 
 }
 
-- (void)reloadSeries:(NSIndexSet *)series {
+- (void)reloadSeries:(NSIndexSet *)series
+{
 
 }
 
-- (void)moveSeries:(NSInteger)series toSeries:(NSInteger)newSeries {
+- (void)moveSeries:(NSInteger)series toSeries:(NSInteger)newSeries
+{
 
 }
 
-- (void)insertPointsAtIndexPaths:(NSArray *)indexPaths {
+- (void)insertPointsAtIndexPaths:(NSArray *)indexPaths
+{
 
 }
 
-- (void)deletePointsAtIndexPaths:(NSArray *)indexPaths {
+- (void)deletePointsAtIndexPaths:(NSArray *)indexPaths
+{
 
 }
 
-- (void)reloadPointsAtIndexPaths:(NSArray *)indexPaths {
+- (void)reloadPointsAtIndexPaths:(NSArray *)indexPaths
+{
 
 }
 
-- (void)movePointsAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath {
+- (void)movePointsAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath
+{
 
 }
 
-- (void)performBatchUpdates:(void (^)(void))updates completion:(void (^)(BOOL finished))completion {
+- (void)performBatchUpdates:(void (^)(void))updates completion:(void (^)(BOOL finished))completion
+{
 
 }
 
-#pragma mark
+#pragma mark - Drawing
 
-- (void)layoutSubviews {
+- (void)layoutSubviews
+{
     [super layoutSubviews];
     //A good idea to impose some extra padding to accomodate axis ends etc
     self.screenSpaceView.frame = CGRectInset(self.bounds, self.xPadding, self.yPadding);
@@ -411,38 +471,12 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     [self drawGraph];
 }
 
-- (void)reloadData {
-    [self populateSeries];
-    if (![self validateData])
-        return;
-    [self setUpValueSpace];
-    [self drawGraph];
-}
-
-- (BOOL)validateData {
-    //If all values on an axis are the same the highest and lowest values are not set correctly.  This resolves that:
-    if (self.lowestXValue == self.highestXValue) {
-        if (self.lowestXValue < 0)
-            self.highestXValue = 0;
-        if (self.highestXValue > 0)
-            self.lowestXValue = 0;
-
-        if (self.lowestXValue < 0)
-            self.highestXValue = 0;
-        if (self.highestYValue > 0)
-            self.lowestYValue = 0;
-    }
-    //Check that we have enough data to draw a graph
-    return !(self.lowestXValue == self.highestXValue || self.lowestYValue == self.highestYValue);
-}
-
-#pragma mark - Drawing
-
-- (void)drawGraph {
+- (void)drawGraph
+{
     //Will work out the amount of space to leave around the graph by grabbing the text for the labels
     //In order to do this we will need to grab all of the data for label text from the delegate so we
     //save that into a property for re-use later
-    [self setupGraphSpace];
+    [self setUpGraphSpace];
 
     //Remove the axis labels which we will redraw
     [self.labels makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -453,41 +487,67 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     if (self.displayYAxis)
         [self drawAxis:BBGraphAxisY];
 
-    for (NSUInteger l = 0; l < [self numberOfSeries]; l++) {
-        [self drawSeries:l];
-    }
+    for (NSUInteger l = 0; l < [self numberOfSeries]; l++)
+	{
+		BBGraphType type = -1;
+		if ([self.dataSource respondsToSelector:@selector(graph:typeOfGraphForSeries:)])
+		{
+			type = [self.dataSource graph:self typeOfGraphForSeries:l];
+		}
 
+		NSAssert(type >= 0, @"You must provide a type for each series in the graph.");
 
+		switch (type)
+		{
+			case BBGraphTypeLine:
+				[self drawLineForSeries:l];
+				break;
+
+			case BBGraphTypeBar:
+				[self drawBarForSeries:l];
+				break;
+
+			default:
+				break;
+		}
+	}
 }
 
-- (void)drawAxis:(BBGraphAxis)axis {
+- (void)drawAxis:(BBGraphAxis)axis
+{
     CGPoint startPoint = CGPointZero;
     CGPoint endPoint = CGPointZero;
     NSString *layerKey;
 
-    if (axis == BBGraphAxisX) {
+    if (axis == BBGraphAxisX)
+	{
         startPoint = CGPointMake(MIN(self.lowestXValue, 0), 0);
         endPoint = CGPointMake(self.highestXValue, 0);
         layerKey = xAxisLayerKey;
     }
-    else {
+    else
+	{
         startPoint = CGPointMake(0, MIN(self.lowestYValue, 0));
         endPoint = CGPointMake(0, self.highestYValue);
         layerKey = yAxisLayerKey;
     }
 
-    if (self.scaleYAxisToValues) {
+    if (self.scaleYAxisToValues)
+	{
         startPoint.y -= self.lowestYValue;
         endPoint.y -= self.lowestYValue;
     }
-    else {
+    else
+	{
         startPoint.y = 0;
     }
-    if (self.scaleXAxisToValues) {
+    if (self.scaleXAxisToValues)
+	{
         startPoint.x -= self.lowestXValue;
         endPoint.x -= self.lowestXValue;
     }
-    else {
+    else
+	{
         startPoint.x = 0;
     }
 
@@ -502,7 +562,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     CAShapeLayer *seriesLayer = [self.axisLayers objectForKey:layerKey];
 
     // if there isn't a series
-    if (!seriesLayer) {
+    if (!seriesLayer)
+	{
         // No seriesLayer found so we need to create one
         seriesLayer = [CAShapeLayer layer];
         seriesLayer.frame = self.screenSpaceView.bounds;
@@ -528,7 +589,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     [self drawDataPointsOnAxis:axis];
 }
 
-- (void)drawDataPointsOnAxis:(BBGraphAxis)axis {
+- (void)drawDataPointsOnAxis:(BBGraphAxis)axis
+{
     //Draw series perpendicular to the Axis for labeled data points
     NSUInteger numberOfLabels = [[self.numberOfAxisLabels objectForKey:@(axis)] unsignedIntegerValue];
     CGFloat intervalOfLabels = [[self.intervalOfAxisLabels objectForKey:@(axis)] floatValue];
@@ -539,7 +601,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     UIBezierPath *seriesPath = [UIBezierPath bezierPath];
 
     //Iterate through the number of required labels and draw the markers
-    for (int i = 0; i <= numberOfLabels; i++) {
+    for (int i = 0; i <= numberOfLabels; i++)
+	{
         //Calculate the value of the data point to mark
         CGFloat labelValue;
         if (axis == BBGraphAxisX)
@@ -553,24 +616,31 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         CGPoint axisPoint = CGPointZero;
         CGPoint endAxisPoint = CGPointZero;
 
-        if (axis == BBGraphAxisX) {
+        if (axis == BBGraphAxisX)
+		{
             axisPoint = CGPointMake(labelValue, 0);
         }
-        else if (axis == BBGraphAxisY) {
+        else if (axis == BBGraphAxisY)
+		{
             axisPoint = CGPointMake(0, labelValue);
         }
 
         //The else if here prevents drawing label markers outside of the chart area
-        if (self.scaleXAxisToValues) {
+        if (self.scaleXAxisToValues)
+		{
             axisPoint.x -= self.lowestXValue;
         }
-        else if (axisPoint.x < 0) {
+        else if (axisPoint.x < 0)
+		{
             continue;
         }
-        if (self.scaleYAxisToValues) {
+
+        if (self.scaleYAxisToValues)
+		{
             axisPoint.y -= self.lowestYValue;
         }
-        else if (axisPoint.y < 0) {
+        else if (axisPoint.y < 0)
+		{
             continue;
         }
 
@@ -578,11 +648,13 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
         endAxisPoint = axisPoint;
 
-        if (axis == BBGraphAxisX) {
+        if (axis == BBGraphAxisX)
+		{
             endAxisPoint.y += axisDataPointSize;
             axisPoint.y -= 1.0f;
         }
-        else if (axis == BBGraphAxisY) {
+        else if (axis == BBGraphAxisY)
+		{
             endAxisPoint.x -= axisDataPointSize;
             axisPoint.x += 1.0f;
         }
@@ -596,7 +668,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
     NSString *layerKey;
 
-    if (axis == BBGraphAxisX) {
+    if (axis == BBGraphAxisX)
+	{
         layerKey = xAxisLayerKey;
     }
     else {
@@ -607,7 +680,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     CAShapeLayer *seriesLayer = [self.axisDataPointLayers objectForKey:layerKey];
 
     // if there isn't a series
-    if (!seriesLayer) {
+    if (!seriesLayer)
+	{
         // For now we are passing in -2 for an axis data point.  There's probably a better way
         seriesLayer = [CAShapeLayer layer];
         seriesLayer.frame = self.screenSpaceView.bounds;
@@ -627,7 +701,8 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     seriesLayer.path = seriesPath.CGPath;
 }
 
-- (void)drawLabelOnAxis:(BBGraphAxis)axis atValue:(CGFloat)value {
+- (void)drawLabelOnAxis:(BBGraphAxis)axis atValue:(CGFloat)value
+{
     //Don't draw for 0
     if (!self.displayZeroAxisLabel && value == 0)
         return;
@@ -642,45 +717,48 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     CGFloat height = 0;
 
     // iOS 7+
-    if ([labelText respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
+    if ([labelText respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)])
+	{
         CGRect rect = [labelText boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)
                                               options:NSStringDrawingUsesLineFragmentOrigin
                                            attributes:@{NSFontAttributeName : self.yAxisFont}
                                               context:nil];
         height = rect.size.height;
     }
-            // iOS < 7
-    else {
+	// iOS < 7
+    else
+	{
         height = [labelText sizeWithFont:self.yAxisFont
                        constrainedToSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)].height;
     }
 
     [label setTextAlignment:NSTextAlignmentRight];
     CGPoint screenSpaceLabelPoint = [self convertPointToScreenSpace:
-            CGPointMake(self.scaleXAxisToValues ? -self.lowestXValue : 0,
-                    value - (self.scaleYAxisToValues ? self.lowestYValue : 0))];
+									 CGPointMake(self.scaleXAxisToValues ? -self.lowestXValue : 0,
+												 value - (self.scaleYAxisToValues ? self.lowestYValue : 0))];
     //The labels on the X axis will be 5% as tall as the graph area and as wide as possible
-    if (axis == BBGraphAxisX) {
+    if (axis == BBGraphAxisX)
+	{
         [label setTextAlignment:NSTextAlignmentCenter];
         screenSpaceLabelPoint = [self convertPointToScreenSpace:
-                CGPointMake(value + (self.scaleXAxisToValues ? -self.lowestXValue : 0),
-                        self.scaleYAxisToValues ? -self.lowestYValue : 0)];
+								 CGPointMake(value + (self.scaleXAxisToValues ? -self.lowestXValue : 0),
+											 self.scaleYAxisToValues ? -self.lowestYValue : 0)];
         CGFloat width = self.screenSpace.size.width / [[self.numberOfAxisLabels objectForKey:@(axis)] floatValue];
         labelRect = CGRectMake(screenSpaceLabelPoint.x - width / 2,
-                screenSpaceLabelPoint.y + axisDataPointSize + axisDataPointPadding,
-                width,
-                height);
+							   screenSpaceLabelPoint.y + axisDataPointSize + axisDataPointPadding,
+							   width,
+							   height);
 
     }
     else if (axis == BBGraphAxisY) //The labels on the Y axis will be 10% the width of the graph and as tall as possible
-    {
+	{
 
         CGFloat width = self.axisView.frame.origin.x;
         labelRect = CGRectMake(screenSpaceLabelPoint.x - width - axisDataPointPadding - axisDataPointSize,
-                screenSpaceLabelPoint.y - height / 2,
-                width,
-                height);
-    }
+							   screenSpaceLabelPoint.y - height / 2,
+							   width,
+							   height);
+	}
 
     label.text = labelText;
     //Get the font size that fits the label
@@ -696,7 +774,57 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     [self.labels addObject:label];
 }
 
-- (void)drawSeries:(NSUInteger)series {
+- (void)drawBarForSeries:(NSUInteger)series
+{
+    // get the series array
+    NSArray *seriesArray = self.series[series];
+
+    // set up a bezier path
+    UIBezierPath *seriesPath = [UIBezierPath bezierPath];
+
+    // loop through the values
+    [seriesArray enumerateObjectsUsingBlock:^(NSValue *pointValue, NSUInteger pointNumber, BOOL *stop)
+	{
+
+        CGPoint point = pointValue.CGPointValue;
+
+        if (self.scaleXAxisToValues)
+            point.x -= self.lowestXValue;
+
+        if (self.scaleYAxisToValues)
+            point.y -= self.lowestYValue;
+
+        // convert the values to screen
+        CGPoint screenPoint = [self convertPointToScreenSpace:point];
+        CGPoint flooredPoint = point;
+        flooredPoint.y = 0;
+        CGPoint screenFlooredPoint = [self convertPointToScreenSpace:flooredPoint];
+
+        [seriesPath moveToPoint:screenFlooredPoint];
+        [seriesPath addLineToPoint:screenPoint];
+    }];
+
+    // get the layer for the series;
+    CAShapeLayer *seriesLayer = [self.seriesLayers objectForKey:@(series)];
+
+    // if there isn't a series
+    if (!seriesLayer)
+	{
+        // create a layer for the series
+        seriesLayer = [self styledBarLayerForSeries:series];
+
+        // add the layer to the view hierarchy
+        [self.screenSpaceView.layer addSublayer:seriesLayer];
+
+        // save a refrence for later;
+        [self.seriesLayers setObject:seriesLayer forKey:@(series)];
+    }
+
+    seriesLayer.frame = self.bounds;
+    seriesLayer.path = seriesPath.CGPath;}
+
+- (void)drawLineForSeries:(NSUInteger)series
+{
     // get the series array
     NSArray *seriesArray = self.series[series];
 
@@ -705,13 +833,15 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
     BOOL curvedLine = NO;
 
-    if ([self.delegate respondsToSelector:@selector(graph:shouldCurveSeries:)]) {
+    if ([self.delegate respondsToSelector:@selector(graph:shouldCurveSeries:)])
+	{
         curvedLine = [self.delegate graph:self shouldCurveSeries:series];
     }
 
 
     // loop through the values
-    [seriesArray enumerateObjectsUsingBlock:^(NSValue *pointValue, NSUInteger pointNumber, BOOL *stop) {
+    [seriesArray enumerateObjectsUsingBlock:^(NSValue *pointValue, NSUInteger pointNumber, BOOL *stop)
+	 {
 
         CGPoint point = pointValue.CGPointValue;
 
@@ -724,30 +854,33 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         // convert the values to screen
         CGPoint screenPoint = [self convertPointToScreenSpace:point];
 
-//		NSLog(@"Value (%f,%f), Screen (%f,%f)", point.x, point.y, screenPoint.x, screenPoint.y);
+		//		NSLog(@"Value (%f,%f), Screen (%f,%f)", point.x, point.y, screenPoint.x, screenPoint.y);
 
         // for the first point move to point
-        if (pointNumber == 0) {
+        if (pointNumber == 0)
+		{
             [seriesPath moveToPoint:screenPoint];
         }
-
-                // for the rest add series to point
-        else {
+		// for the rest add series to point
+        else
+		{
             [seriesPath addLineToPoint:screenPoint];
 
         }
     }];
     if (curvedLine)
-        seriesPath = [seriesPath smoothedPathWithGranularity:self.bounds.size.width / [seriesArray count]];
-
+    {
+		seriesPath = [seriesPath smoothedPathWithGranularity:self.bounds.size.width / [seriesArray count]];
+	}
 
     // get the layer for the series;
     CAShapeLayer *seriesLayer = [self.seriesLayers objectForKey:@(series)];
 
     // if there isn't a series
-    if (!seriesLayer) {
+    if (!seriesLayer)
+	{
         // create a layer for the series
-        seriesLayer = [self styledLayerForSeries:series];
+        seriesLayer = [self styledLineLayerForSeries:series];
 
         // add the layer to the view hierarchy
         [self.screenSpaceView.layer addSublayer:seriesLayer];
@@ -760,15 +893,31 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     seriesLayer.path = seriesPath.CGPath;
 }
 
-- (CAShapeLayer *)styledLayerForSeries:(NSUInteger)series {
+- (CAShapeLayer *)styledBarLayerForSeries:(NSUInteger)series
+{
+    CAShapeLayer *layer = [CAShapeLayer layer];
+    layer.frame = self.screenSpaceView.bounds;
+
+	layer.lineWidth = 20.f;
+
+    layer.strokeColor = [self colorForSeries:series];
+    layer.fillColor = [UIColor clearColor].CGColor;
+
+    return layer;
+}
+
+- (CAShapeLayer *)styledLineLayerForSeries:(NSUInteger)series
+{
     CAShapeLayer *layer = [CAShapeLayer layer];
     layer.frame = self.screenSpaceView.bounds;
 
     layer.lineJoin = kCALineJoinRound;
-    if ([self.delegate respondsToSelector:@selector(graph:widthForSeries:)]) {
+    if ([self.delegate respondsToSelector:@selector(graph:widthForSeries:)])
+	{
         layer.lineWidth = [self.delegate graph:self widthForSeries:series];
     }
-    else {
+    else
+	{
         layer.lineWidth = 2.f;
     }
 
@@ -780,8 +929,10 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 #pragma mark - Animation
 
-- (void)animateGraph {
-    for (id seriesKey in [self.seriesLayers allKeys]) {
+- (void)animateGraph
+{
+    for (id seriesKey in [self.seriesLayers allKeys])
+	{
         CAShapeLayer *seriesLayer = self.seriesLayers[seriesKey];
 
         NSTimeInterval animationDuration = .3f;
@@ -797,18 +948,22 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 }
 
-#pragma mark
+#pragma mark - Helpers
 
-- (UIView *)axisView {
-    if (!_axisView) {
+- (UIView *)axisView
+{
+    if (!_axisView)
+	{
         _axisView = [[UIView alloc] initWithFrame:self.bounds];
         [self addSubview:_axisView];
     }
     return _axisView;
 }
 
-- (UIView *)screenSpaceView {
-    if (!_screenSpaceView) {
+- (UIView *)screenSpaceView
+{
+    if (!_screenSpaceView)
+	{
         _screenSpaceView = [[UIView alloc] initWithFrame:self.bounds];
         _screenSpaceView.clipsToBounds = NO;
         [self addSubview:_screenSpaceView];
@@ -817,25 +972,29 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     return _screenSpaceView;
 }
 
-- (CGRect)screenSpace {
+- (CGRect)screenSpace
+{
     return self.screenSpaceView.bounds;
 }
 
-- (CGPoint)convertPointToScreenSpace:(CGPoint)point {
+- (CGPoint)convertPointToScreenSpace:(CGPoint)point
+{
     return CGPointApplyAffineTransform(point, [self transformFromValueToScreen]);
 }
 
-- (CGPoint)convertPointToValueSpace:(CGPoint)point {
+- (CGPoint)convertPointToValueSpace:(CGPoint)point
+{
     return CGPointApplyAffineTransform(point, [self transformFromScreenToValue]);
 }
 
-- (CGAffineTransform)transformFromValueToScreen {
+- (CGAffineTransform)transformFromValueToScreen
+{
     CGRect fromRect = self.valueSpace;
     CGRect viewRect = self.screenSpace;
 
     // get the scale delta
     CGSize scales = CGSizeMake(viewRect.size.width / fromRect.size.width,
-            viewRect.size.height / fromRect.size.height);
+							   viewRect.size.height / fromRect.size.height);
 
     // set up a transform
     CGAffineTransform transform = CGAffineTransformIdentity;
@@ -852,11 +1011,13 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     return transform;
 }
 
-- (CGAffineTransform)transformFromScreenToValue {
+- (CGAffineTransform)transformFromScreenToValue
+{
     return CGAffineTransformInvert([self transformFromValueToScreen]);
 }
 
-- (CGFloat)roundValue:(CGFloat)number Up:(BOOL)up {
+- (CGFloat)roundValue:(CGFloat)number Up:(BOOL)up
+{
     // this dosn't work well for decimals between 0 and 1;
 
     double numberOfSignificentFigures = ceil(log10(fabs(number)));
@@ -875,17 +1036,18 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     return u * multiple;
 }
 
-- (CGColorRef)colorForSeries:(NSInteger)series {
+- (CGColorRef)colorForSeries:(NSInteger)series
+{
     UIColor *color = nil;
 
     if (series < 0) //Axis colours
-    {
+	{
         color = self.axisColor;
-    }
+	}
     else if ([self.delegate respondsToSelector:@selector(graph:colorForSeries:)]) //Series colours
-    {
+	{
         color = [self.delegate graph:self colorForSeries:series];
-    }
+	}
 
     if (color)
         return color.CGColor;
@@ -897,15 +1059,18 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 @implementation NSIndexPath (BBLineGraph)
 
-+ (NSIndexPath *)indexPathForPoint:(NSInteger)point inSeries:(NSInteger)series {
++ (NSIndexPath *)indexPathForPoint:(NSInteger)point inSeries:(NSInteger)series
+{
     return [self indexPathForItem:point inSection:series];
 }
 
-- (NSInteger)series {
+- (NSInteger)series
+{
     return self.section;
 }
 
-- (NSInteger)point {
+- (NSInteger)point
+{
     return self.item;
 }
 
