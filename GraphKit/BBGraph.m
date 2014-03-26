@@ -126,6 +126,13 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
     }
 }
 
+- (CGPoint)pointAtIndexPath:(NSIndexPath *)indexPath
+{
+	NSValue *pointValue = self.series[indexPath.series][indexPath.point];
+
+	return [pointValue CGPointValue];
+}
+
 #pragma mark - Create Data Structure
 
 - (void)populateSeries
@@ -139,86 +146,103 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         numberOfSeries = [self.dataSource numberOfSeriesInGraph:self];
     }
 
-    // set up some holders fpr the high and low values
-    CGFloat highestYValue = -MAXFLOAT;
-    CGFloat highestXValue = -MAXFLOAT;
-
-    CGFloat lowestYValue = MAXFLOAT;
-    CGFloat lowestXValue = MAXFLOAT;
-
     // create an array to holder the lines
     NSMutableArray *lines = [NSMutableArray arrayWithCapacity:numberOfSeries];
 
     // loop to get the lines
     for (NSInteger l = 0; l < numberOfSeries; l++)
 	{
-
-        // check how many points are in this series
-        NSUInteger numberOfPoints = [self.dataSource graph:self
-                                    numberOfPointsInSeries:l];
-
-        // create an array to hold the points
-        NSMutableArray *points = [NSMutableArray arrayWithCapacity:numberOfPoints];
-
-        // loop to get the points for this series
-        for (NSInteger p = 0; p < numberOfPoints; p++)
-		{
-
-            // get the point from the data source
-            CGPoint point = [self.dataSource graph:self
-                              valueForPointAtIndex:[NSIndexPath indexPathForPoint:p
-                                                                         inSeries:l]];
-
-            // added it to the points array
-            [points addObject:[NSValue valueWithCGPoint:point]];
-
-            // get the highest and lowest values in the data set;
-            highestYValue = MAX(highestYValue, point.y);
-            highestXValue = MAX(highestXValue, point.x);
-
-            lowestYValue = MIN(lowestYValue, point.y);
-            lowestXValue = MIN(lowestXValue, point.x);
-
-        }
-
-        // sort the series
-        [points sortUsingComparator:^NSComparisonResult(id obj1, id obj2)
-		 {
-			 if (self.orderedAxis == BBGraphAxisX)
-			 {
-				 if ([obj1 CGPointValue].x > [obj2 CGPointValue].x)
-				 {
-					 return (NSComparisonResult) NSOrderedDescending;
-				 }
-
-				 if ([obj1 CGPointValue].x < [obj2 CGPointValue].x)
-				 {
-					 return (NSComparisonResult) NSOrderedAscending;
-				 }
-				 return (NSComparisonResult) NSOrderedSame;
-			 }
-			 else
-			 {
-				 if ([obj1 CGPointValue].y > [obj2 CGPointValue].y)
-				 {
-					 return (NSComparisonResult) NSOrderedDescending;
-				 }
-
-				 if ([obj1 CGPointValue].y < [obj2 CGPointValue].y)
-				 {
-					 return (NSComparisonResult) NSOrderedAscending;
-				 }
-				 return (NSComparisonResult) NSOrderedSame;
-
-			 }
-		 }];
-
-        // add the array of points to the lines array, still with me?
-        [lines addObject:points];
+		// add the array of points to the lines array, still with me?
+        [lines addObject:[self pointsForSeries:l]];
     }
 
-    // save the lines array
+	// save the lines array
     self.series = lines;
+
+	[self findHighestAndLowestValues];
+    [self calclateInset];
+}
+
+- (NSArray *)pointsForSeries:(NSUInteger)series
+{
+	// check how many points are in this series
+	NSUInteger numberOfPoints = [self.dataSource graph:self
+								numberOfPointsInSeries:series];
+
+	// create an array to hold the points
+	NSMutableArray *points = [NSMutableArray arrayWithCapacity:numberOfPoints];
+
+	// loop to get the points for this series
+	for (NSInteger pointNumber = 0; pointNumber < numberOfPoints; pointNumber++)
+	{
+
+		// get the point from the data source
+		CGPoint point = [self.dataSource graph:self
+						  valueForPointAtIndex:[NSIndexPath indexPathForPoint:pointNumber
+																	 inSeries:series]];
+
+		// added it to the points array
+		[points addObject:[NSValue valueWithCGPoint:point]];
+	}
+
+	// sort the series
+	[points sortUsingComparator:^NSComparisonResult(id obj1, id obj2)
+	 {
+		 if (self.orderedAxis == BBGraphAxisX)
+		 {
+			 if ([obj1 CGPointValue].x > [obj2 CGPointValue].x)
+			 {
+				 return (NSComparisonResult) NSOrderedDescending;
+			 }
+
+			 if ([obj1 CGPointValue].x < [obj2 CGPointValue].x)
+			 {
+				 return (NSComparisonResult) NSOrderedAscending;
+			 }
+			 return (NSComparisonResult) NSOrderedSame;
+		 }
+		 else
+		 {
+			 if ([obj1 CGPointValue].y > [obj2 CGPointValue].y)
+			 {
+				 return (NSComparisonResult) NSOrderedDescending;
+			 }
+
+			 if ([obj1 CGPointValue].y < [obj2 CGPointValue].y)
+			 {
+				 return (NSComparisonResult) NSOrderedAscending;
+			 }
+			 return (NSComparisonResult) NSOrderedSame;
+
+		 }
+	 }];
+
+	return points;
+}
+
+- (void)findHighestAndLowestValues
+{
+	// set up some holders fpr the high and low values
+    CGFloat highestYValue = -MAXFLOAT;
+    CGFloat highestXValue = -MAXFLOAT;
+
+    CGFloat lowestYValue = MAXFLOAT;
+    CGFloat lowestXValue = MAXFLOAT;
+
+	for (NSArray *series in self.series)
+	{
+		for (NSValue *pointValue in series)
+		{
+			CGPoint point = [pointValue CGPointValue];
+
+			// get the highest and lowest values in the data set;
+			highestYValue = MAX(highestYValue, point.y);
+			highestXValue = MAX(highestXValue, point.x);
+
+			lowestYValue = MIN(lowestYValue, point.y);
+			lowestXValue = MIN(lowestXValue, point.x);
+		}
+	}
 
     // finaly round and save the high and low values
     if (self.roundYAxis)
@@ -242,8 +266,6 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
         self.lowestXValue = lowestXValue;
         self.lowestYValue = lowestYValue;
     }
-
-    [self calclateInset];
 }
 
 - (BOOL)validateData
@@ -411,22 +433,61 @@ NSString *const yAxisLayerKey = @"yAxisLayer";
 
 - (void)insertSeries:(NSIndexSet *)series
 {
+	NSUInteger numberOfSeriesInGraph = [self.dataSource numberOfSeriesInGraph:self];
+	NSAssert(numberOfSeriesInGraph == self.series.count + series.count, @"The number of series does not match the expected number.");
 
+	NSMutableArray *mutSeries = self.series.mutableCopy;
+
+	[series enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+		[mutSeries insertObject:[self pointsForSeries:idx]
+						atIndex:idx];
+	}];
+
+	self.series = mutSeries.copy;
 }
 
 - (void)deleteSeries:(NSIndexSet *)series
 {
+	NSUInteger numberOfSeriesInGraph = [self.dataSource numberOfSeriesInGraph:self];
+	NSAssert(numberOfSeriesInGraph == self.series.count - series.count, @"The number of series does not match the expected number.");
 
+	NSMutableArray *mutSeries = self.series.mutableCopy;
+
+	[series enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+		[mutSeries removeObjectAtIndex:idx];
+	}];
+
+	self.series = mutSeries.copy;
 }
 
 - (void)reloadSeries:(NSIndexSet *)series
 {
+	NSUInteger numberOfSeriesInGraph = [self.dataSource numberOfSeriesInGraph:self];
+	NSAssert(numberOfSeriesInGraph == self.series.count, @"The number of series does not match the expected number.");
 
+	NSMutableArray *mutSeries = self.series.mutableCopy;
+
+	[series enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+		[mutSeries removeObjectAtIndex:idx];
+		[mutSeries insertObject:[self pointsForSeries:idx]
+						atIndex:idx];
+	}];
+
+	self.series = mutSeries.copy;
 }
 
 - (void)moveSeries:(NSInteger)series toSeries:(NSInteger)newSeries
 {
+	NSUInteger numberOfSeriesInGraph = [self.dataSource numberOfSeriesInGraph:self];
+	NSAssert(numberOfSeriesInGraph == self.series.count, @"The number of series does not match the expected number.");
 
+	NSMutableArray *mutSeries = self.series.mutableCopy;
+
+	[mutSeries removeObjectAtIndex:series];
+	[mutSeries insertObject:[self pointsForSeries:newSeries]
+					atIndex:newSeries];
+
+	self.series = mutSeries.copy;
 }
 
 - (void)insertPointsAtIndexPaths:(NSArray *)indexPaths
