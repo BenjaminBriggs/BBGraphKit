@@ -18,8 +18,24 @@
 		B5163F761896E48B00EE01F3 /* BBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F751896E48B00EE01F3 /* BBAppDelegate.m */; };
 		B5163F7F1896E48B00EE01F3 /* BBViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5163F7E1896E48B00EE01F3 /* BBViewController.m */; };
 		B5163F811896E48B00EE01F3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5163F801896E48B00EE01F3 /* Images.xcassets */; };
+		B5D722D618E3643400E7A2D6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F871896E48B00EE01F3 /* XCTest.framework */; };
+		B5D722D718E3643400E7A2D6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F651896E48B00EE01F3 /* Foundation.framework */; };
+		B5D722D818E3643400E7A2D6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5163F691896E48B00EE01F3 /* UIKit.framework */; };
+		B5D722DE18E3643400E7A2D6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B5D722DC18E3643400E7A2D6 /* InfoPlist.strings */; };
+		B5D722E818E3645F00E7A2D6 /* BBGraphTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D722E718E3645F00E7A2D6 /* BBGraphTests.m */; };
+		B5D722EB18E3656900E7A2D6 /* BBGraphTestDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D722EA18E3656900E7A2D6 /* BBGraphTestDataSource.m */; };
 		DC5588041899194800BD4566 /* BBGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5588031899194800BD4566 /* BBGraph.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B5D722E218E3643400E7A2D6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B5163F5A1896E48B00EE01F3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B5163F611896E48B00EE01F3;
+			remoteInfo = GraphKit;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		022854BE18A1296000DAE41A /* UIBezierPath+Smoothing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIBezierPath+Smoothing.h"; path = "GraphKit/UIBezierPath+Smoothing.h"; sourceTree = "<group>"; };
@@ -41,6 +57,13 @@
 		B5163F7E1896E48B00EE01F3 /* BBViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BBViewController.m; path = "../GraphKit Example/BBViewController.m"; sourceTree = "<group>"; };
 		B5163F801896E48B00EE01F3 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../GraphKit Example/Images.xcassets"; sourceTree = "<group>"; };
 		B5163F871896E48B00EE01F3 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		B5D722D518E3643400E7A2D6 /* GraphKit Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GraphKit Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5D722DB18E3643400E7A2D6 /* GraphKit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GraphKit Tests-Info.plist"; sourceTree = "<group>"; };
+		B5D722DD18E3643400E7A2D6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B5D722E118E3643400E7A2D6 /* GraphKit Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GraphKit Tests-Prefix.pch"; sourceTree = "<group>"; };
+		B5D722E718E3645F00E7A2D6 /* BBGraphTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBGraphTests.m; sourceTree = "<group>"; };
+		B5D722E918E3656900E7A2D6 /* BBGraphTestDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBGraphTestDataSource.h; sourceTree = "<group>"; };
+		B5D722EA18E3656900E7A2D6 /* BBGraphTestDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBGraphTestDataSource.m; sourceTree = "<group>"; };
 		DC5588021899194800BD4566 /* BBGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBGraph.h; path = GraphKit/BBGraph.h; sourceTree = "<group>"; };
 		DC5588031899194800BD4566 /* BBGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBGraph.m; path = GraphKit/BBGraph.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,6 +76,16 @@
 				B5163F681896E48B00EE01F3 /* CoreGraphics.framework in Frameworks */,
 				B5163F6A1896E48B00EE01F3 /* UIKit.framework in Frameworks */,
 				B5163F661896E48B00EE01F3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B5D722D218E3643400E7A2D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5D722D618E3643400E7A2D6 /* XCTest.framework in Frameworks */,
+				B5D722D818E3643400E7A2D6 /* UIKit.framework in Frameworks */,
+				B5D722D718E3643400E7A2D6 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +110,7 @@
 				43A9732D1897C9EA00A9DEF9 /* BBGraphKit.podspec */,
 				43A973301897CEBA00A9DEF9 /* GraphKit */,
 				B5163F6B1896E48B00EE01F3 /* Example */,
+				B5D722D918E3643400E7A2D6 /* GraphKit Tests */,
 				B5163F641896E48B00EE01F3 /* Frameworks */,
 				B5163F631896E48B00EE01F3 /* Products */,
 			);
@@ -86,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				B5163F621896E48B00EE01F3 /* GraphKit.app */,
+				B5D722D518E3643400E7A2D6 /* GraphKit Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -127,12 +162,33 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		B5D722D918E3643400E7A2D6 /* GraphKit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				B5D722E718E3645F00E7A2D6 /* BBGraphTests.m */,
+				B5D722DA18E3643400E7A2D6 /* Supporting Files */,
+				B5D722E918E3656900E7A2D6 /* BBGraphTestDataSource.h */,
+				B5D722EA18E3656900E7A2D6 /* BBGraphTestDataSource.m */,
+			);
+			path = "GraphKit Tests";
+			sourceTree = "<group>";
+		};
+		B5D722DA18E3643400E7A2D6 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B5D722DB18E3643400E7A2D6 /* GraphKit Tests-Info.plist */,
+				B5D722DC18E3643400E7A2D6 /* InfoPlist.strings */,
+				B5D722E118E3643400E7A2D6 /* GraphKit Tests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B5163F611896E48B00EE01F3 /* GraphKit */ = {
+		B5163F611896E48B00EE01F3 /* GraphKit Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B5163F971896E48B00EE01F3 /* Build configuration list for PBXNativeTarget "GraphKit" */;
+			buildConfigurationList = B5163F971896E48B00EE01F3 /* Build configuration list for PBXNativeTarget "GraphKit Example" */;
 			buildPhases = (
 				B5163F5E1896E48B00EE01F3 /* Sources */,
 				B5163F5F1896E48B00EE01F3 /* Frameworks */,
@@ -142,10 +198,28 @@
 			);
 			dependencies = (
 			);
-			name = GraphKit;
+			name = "GraphKit Example";
 			productName = GraphKit;
 			productReference = B5163F621896E48B00EE01F3 /* GraphKit.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B5D722D418E3643400E7A2D6 /* GraphKit Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B5D722E618E3643400E7A2D6 /* Build configuration list for PBXNativeTarget "GraphKit Tests" */;
+			buildPhases = (
+				B5D722D118E3643400E7A2D6 /* Sources */,
+				B5D722D218E3643400E7A2D6 /* Frameworks */,
+				B5D722D318E3643400E7A2D6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B5D722E318E3643400E7A2D6 /* PBXTargetDependency */,
+			);
+			name = "GraphKit Tests";
+			productName = "GraphKit Tests";
+			productReference = B5D722D518E3643400E7A2D6 /* GraphKit Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -159,6 +233,9 @@
 				TargetAttributes = {
 					B5163F611896E48B00EE01F3 = {
 						DevelopmentTeam = N29LW4SJ55;
+					};
+					B5D722D418E3643400E7A2D6 = {
+						TestTargetID = B5163F611896E48B00EE01F3;
 					};
 				};
 			};
@@ -175,7 +252,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B5163F611896E48B00EE01F3 /* GraphKit */,
+				B5163F611896E48B00EE01F3 /* GraphKit Example */,
+				B5D722D418E3643400E7A2D6 /* GraphKit Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -189,6 +267,14 @@
 				43A9732E1897C9EA00A9DEF9 /* BBGraphKit.podspec in Resources */,
 				B5163F811896E48B00EE01F3 /* Images.xcassets in Resources */,
 				B5163F701896E48B00EE01F3 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B5D722D318E3643400E7A2D6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5D722DE18E3643400E7A2D6 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,7 +293,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B5D722D118E3643400E7A2D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5D722E818E3645F00E7A2D6 /* BBGraphTests.m in Sources */,
+				B5D722EB18E3656900E7A2D6 /* BBGraphTestDataSource.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B5D722E318E3643400E7A2D6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B5163F611896E48B00EE01F3 /* GraphKit Example */;
+			targetProxy = B5D722E218E3643400E7A2D6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B5163F6E1896E48B00EE01F3 /* InfoPlist.strings */ = {
@@ -226,6 +329,14 @@
 			);
 			name = Main_iPhone.storyboard;
 			path = "../GraphKit Example";
+			sourceTree = "<group>";
+		};
+		B5D722DC18E3643400E7A2D6 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B5D722DD18E3643400E7A2D6 /* en */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -339,6 +450,50 @@
 			};
 			name = Release;
 		};
+		B5D722E418E3643400E7A2D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/GraphKit Example.app/GraphKit Example";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraphKit Tests/GraphKit Tests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "GraphKit Tests/GraphKit Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		B5D722E518E3643400E7A2D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/GraphKit Example.app/GraphKit Example";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraphKit Tests/GraphKit Tests-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "GraphKit Tests/GraphKit Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -351,11 +506,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B5163F971896E48B00EE01F3 /* Build configuration list for PBXNativeTarget "GraphKit" */ = {
+		B5163F971896E48B00EE01F3 /* Build configuration list for PBXNativeTarget "GraphKit Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B5163F981896E48B00EE01F3 /* Debug */,
 				B5163F991896E48B00EE01F3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B5D722E618E3643400E7A2D6 /* Build configuration list for PBXNativeTarget "GraphKit Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B5D722E418E3643400E7A2D6 /* Debug */,
+				B5D722E518E3643400E7A2D6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
