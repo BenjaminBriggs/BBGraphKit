@@ -2,7 +2,7 @@
 //  BBBarGraph.h
 //  GraphKit
 //
-//  Created by Palringo on 19/03/2014.
+//  Created by Benjamin Briggs on 19/03/2014.
 //  Copyright (c) 2014 Benjamin Briggs. All rights reserved.
 //
 
